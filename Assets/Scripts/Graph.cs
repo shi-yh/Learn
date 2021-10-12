@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block : MonoBehaviour
+public class Graph : MonoBehaviour
 {
     [SerializeField]
     private GameObject _temp;

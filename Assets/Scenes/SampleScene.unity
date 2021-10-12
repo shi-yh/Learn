@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 217614006}
   - component: {fileID: 217614005}
+  - component: {fileID: 217614007}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -147,14 +148,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 217614004}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 433fe5d8517a3e34fb592d29340396f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _temp: {fileID: 9088942529207020507, guid: 02fdfbee8063511479a46ae17054b558, type: 3}
-  _resolution: 100
-  _FunctionName: 4
+  _resolution: 200
+  _functionName: 0
+  _functionDuration: 1
+  _transitionDuration: 1
 --- !u!4 &217614006
 Transform:
   m_ObjectHideFlags: 0
@@ -169,6 +172,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &217614007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 217614004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e9cff3c296f4684ab64a8db0e265d6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _resolution: 200
+  _functionName: 0
+  _functionDuration: 1
+  _transitionDuration: 0
+  _materia: {fileID: 2100000, guid: 863a4af569d1f76478ba1eb6c5d50c37, type: 2}
+  _mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  _computerShader: {fileID: 7200000, guid: 8633bf77f96e91549b0c89511b91122e, type: 3}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
