@@ -19,13 +19,25 @@ public static class FunctionLibrary
         Wave,
         MultiWave,
         Ripple,
-        Sphere
+        Sphere,
+        Torus
     }
 
     private static Function2D[] _functions2D = {Wave, MultiWave, Ripple};
 
-    private static Function3D[] _function3D = {Wave, MultiWave, Ripple, Sphere};
+    private static Function3D[] _function3D = {Wave, MultiWave, Ripple, Sphere, Torus};
 
+    public static Function3DName GetNextFunctionName(Function3DName name)
+    {
+        return (int) name < _function3D.Length - 1 ? name + 1 : Function3DName.Wave;
+    }
+
+    public static Vector3 Morph(float u, float v, float t, Function3D from, Function3D to, float progress)
+    {
+        return Vector3.LerpUnclamped(from(u, v, t), to(u, v, t), progress);
+    }
+    
+    
     public static Function2D GetFunction2D(Function2DName name)
     {
         return _functions2D[(int) name];
@@ -129,7 +141,24 @@ public static class FunctionLibrary
         float r = Cos(0.5f * PI * t);
         float s = r * Cos(0.5f * PI * v);
         p.x = s * Sin(PI * u);
-        p.y = r* Sin(PI * 0.5f * v);
+        p.y = r * Sin(PI * 0.5f * v);
+        p.z = s * Cos(PI * u);
+
+        return p;
+    }
+
+    private static Vector3 Torus(float u, float v, float t)
+    {
+        float r1 = 0.7f + 0.1f * Sin(PI * (6f * u + 0.5f * t));
+        float r2 = 0.15f + 0.05f * Sin(PI * (8f * u + 4f * v + 2f * t));
+
+        float s = r1 + r2 * Cos(PI * v);
+        Vector3 p;
+
+        p.x = s * Sin(PI * u);
+
+        p.y = r2 * Sin(PI * v);
+
         p.z = s * Cos(PI * u);
 
         return p;

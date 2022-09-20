@@ -1,0 +1,49 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel FunctionKernel
+#define PI 3.1415926
+
+
+///结构化缓冲区
+RWStructuredBuffer<float3> _Positions;
+
+uint _Resolution;
+
+float _Step,_Time;
+
+
+float2 GetUV(uint3 id)
+{
+    return (id.xy + 0.5) * _Step - 1.0;
+}
+
+///
+void SetPosition(uint3 id, float3 position)
+{
+    ///我们每个小组都计算了一个有8个8个点的网格。
+    ///如果这个图的分辨率不是8的倍数，那么我们将会得到一行和一列的组来计算一些超出边界的点。
+    ///这些点的索引要么落在缓冲区之外，要么与有效索引冲突，这会破坏我们的数据。
+    if (id.x < _Resolution && id.y < _Resolution)
+    {
+        _Positions[id.x + id.y * _Resolution] = position;
+    }
+}
+
+
+float3 Wave(float u, float v, float t)
+{
+    float3 p;
+
+    p.x = u;
+    p.y = sin(PI * (u + v + t));
+    p.z = v;
+
+    return p;
+}
+
+
+[numthreads(8,8,1)]
+void FunctionKernel(uint3 id : SV_DispatchThreadID)
+{
+    float2 uv = GetUV(id);
+    SetPosition(id, Wave(uv.x,uv.y,_Time));
+}
