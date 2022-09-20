@@ -9,6 +9,9 @@ public class VisualizingMath : MonoBehaviour
 
     [SerializeField, Range(10, 100)] private int resolution = 10;
 
+    [SerializeField]
+    private FunctionLibrary.Function2DName _functionName = default;
+    
     private Transform[] _points;
     
     private void Awake()
@@ -40,11 +43,9 @@ public class VisualizingMath : MonoBehaviour
         {
             Vector3 pointPos = _points[i].position;
 
-            pointPos.y = Mathf.Sin(Mathf.PI * (pointPos.x + time));
+            pointPos.y = FunctionLibrary.GetFunction2D(_functionName)(pointPos.x,time);
 
             _points[i].position = pointPos;
-
-
         }
     }
 }
