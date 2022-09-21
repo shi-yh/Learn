@@ -36,6 +36,11 @@ public static class FunctionLibrary
     {
         return Vector3.LerpUnclamped(from(u, v, t), to(u, v, t), progress);
     }
+
+    public static int GetFunctionCount()
+    {
+        return _function3D.Length;
+    }
     
     
     public static Function2D GetFunction2D(Function2DName name)
