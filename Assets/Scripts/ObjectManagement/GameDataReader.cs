@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -7,9 +5,12 @@ public class GameDataReader
 {
     private BinaryReader _reader;
 
-    public GameDataReader(BinaryReader reder)
+    public int Version { get; }
+
+    public GameDataReader(BinaryReader reder, int version)
     {
         _reader = reder;
+        Version = version;
     }
 
 
@@ -44,5 +45,18 @@ public class GameDataReader
         value.z = _reader.ReadSingle();
 
         return value;
+    }
+
+    public Color ReadColor()
+    {
+        Color c;
+
+        c.r = _reader.ReadSingle();
+        c.g = _reader.ReadSingle();
+        c.b = _reader.ReadSingle();
+        c.a = _reader.ReadSingle();
+
+
+        return c;
     }
 }

@@ -1,13 +1,10 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Game : PersistableObject
 {
-    public PersistableObject prefab;
+    public ShapeFactory shapeFactory;
 
     public KeyCode createKey = KeyCode.C;
 
@@ -17,20 +14,22 @@ public class Game : PersistableObject
 
     public KeyCode loadKey = KeyCode.L;
 
-    private List<PersistableObject> _objects;
+    private List<Shape> _shapes;
 
     public PersisentStorage storage;
 
+    private const int SAVE_VERSION = 1;
+
     private void Awake()
     {
-        _objects = new List<PersistableObject>();
+        _shapes = new List<Shape>();
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(createKey))
         {
-            CreateObject();
+            CreateShape();
         }
         else if (Input.GetKeyDown(newGameKey))
         {
@@ -38,7 +37,7 @@ public class Game : PersistableObject
         }
         else if (Input.GetKeyDown(saveKey))
         {
-            storage.Save(this);
+            storage.Save(this, SAVE_VERSION);
         }
         else if (Input.GetKeyDown(loadKey))
         {
@@ -49,44 +48,58 @@ public class Game : PersistableObject
 
     private void BeginNewGame()
     {
-        for (int i = 0; i < _objects.Count; i++)
+        for (int i = 0; i < _shapes.Count; i++)
         {
-            Destroy(_objects[i].gameObject);
+            Destroy(_shapes[i].gameObject);
         }
 
-        _objects.Clear();
+        _shapes.Clear();
     }
 
 
     public override void Save(GameDataWriter writer)
     {
-        writer.Write(_objects.Count);
-        for (int i = 0; i < _objects.Count; i++)
+        writer.Write(_shapes.Count);
+        for (int i = 0; i < _shapes.Count; i++)
         {
-            _objects[i].Save(writer);
+            writer.Write(_shapes[i].ShapeId);
+            writer.Write(_shapes[i].MaterialId);
+            _shapes[i].Save(writer);
         }
     }
 
     public override void Load(GameDataReader reader)
     {
-        int count = reader.ReadInt();
+        int version = reader.Version;
+
+        if (version > SAVE_VERSION)
+        {
+            Debug.LogError("Unsupported future save version" + version);
+            return;
+        }
+
+        int count = version <= 0 ? -version : reader.ReadInt();
 
         for (int i = 0; i < count; i++)
         {
-            PersistableObject o = Instantiate(prefab);
+            int shapeId = version > 0 ? reader.ReadInt() : 0;
+            int materialId = version > 0 ? reader.ReadInt() : 0;
+
+            Shape o = shapeFactory.Get(shapeId, materialId);
             o.Load(reader);
-            _objects.Add(o);
+            _shapes.Add(o);
         }
     }
 
 
-    void CreateObject()
+    void CreateShape()
     {
-        PersistableObject o = Instantiate(prefab);
-        Transform t = o.transform;
+        Shape instance = shapeFactory.GetRandom();
+        Transform t = instance.transform;
         t.localPosition = Random.insideUnitSphere * 5;
         t.rotation = Random.rotation;
         t.localScale = Vector3.one * Random.Range(0.1f, 1f);
-        _objects.Add(o);
+        instance.SetColor(Random.ColorHSV(0, 1, 0.5f, 1f, 0.25f, 1f, 1f, 1f));
+        _shapes.Add(instance);
     }
 }
