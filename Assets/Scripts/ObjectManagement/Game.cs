@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class Game : PersistableObject
@@ -16,12 +18,7 @@ public class Game : PersistableObject
 
     public KeyCode destroyKey = KeyCode.X;
 
-    public float CreationSpeed { get; set; }
-
-    public float DestructionSpeed { get; set; }
-
-    private float _creationProgress;
-    private float _destructionProgress;
+    public int levelCount;
 
     private List<Shape> _shapes;
 
@@ -29,10 +26,33 @@ public class Game : PersistableObject
 
     private const int SAVE_VERSION = 1;
 
+    private int _loadSceneIdx;
+
+
     private void Awake()
     {
         _shapes = new List<Shape>();
+
+        StartCoroutine(LoadLevel(1));
     }
+
+    IEnumerator LoadLevel(int levelIdx)
+    {
+        enabled = false;
+
+        if (_loadSceneIdx > 0)
+        {
+            yield return SceneManager.UnloadSceneAsync(_loadSceneIdx);
+        }
+
+        yield return SceneManager.LoadSceneAsync(levelIdx, LoadSceneMode.Additive);
+        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(levelIdx));
+
+        _loadSceneIdx = levelIdx;
+
+        enabled = true;
+    }
+
 
     private void Update()
     {
@@ -57,20 +77,17 @@ public class Game : PersistableObject
         {
             DestroyShape();
         }
-
-        _creationProgress += Time.deltaTime * CreationSpeed;
-
-        if (_creationProgress >= 1)
+        else
         {
-            _creationProgress -= 1;
-            CreateShape();
-        }
-
-        _destructionProgress += Time.deltaTime * DestructionSpeed;
-        if (_destructionProgress >= 1)
-        {
-            _destructionProgress -= 1;
-            DestroyShape();
+            for (int i = 0; i <= levelCount; i++)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha0 + i))
+                {
+                    BeginNewGame();
+                    StartCoroutine(LoadLevel(i));
+                    return;
+                }
+            }
         }
     }
 

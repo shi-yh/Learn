@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [CreateAssetMenu]
 public class ShapeFactory : ScriptableObject
@@ -10,6 +11,7 @@ public class ShapeFactory : ScriptableObject
 
     [SerializeField] private bool _recycle;
 
+    private Scene _poolScene;
 
     private List<Shape>[] _pools;
 
@@ -21,6 +23,8 @@ public class ShapeFactory : ScriptableObject
         {
             _pools[i] = new List<Shape>();
         }
+
+        _poolScene = SceneManager.CreateScene(name);
     }
 
 
@@ -52,6 +56,9 @@ public class ShapeFactory : ScriptableObject
                 instance = Instantiate(_prefabs[shapeId]);
 
                 instance.ShapeId = shapeId;
+                
+                SceneManager.MoveGameObjectToScene(instance.gameObject,_poolScene);
+                
             }
         }
         else
