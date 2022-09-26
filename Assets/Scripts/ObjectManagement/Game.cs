@@ -14,6 +14,15 @@ public class Game : PersistableObject
 
     public KeyCode loadKey = KeyCode.L;
 
+    public KeyCode destroyKey = KeyCode.X;
+
+    public float CreationSpeed { get; set; }
+
+    public float DestructionSpeed { get; set; }
+
+    private float _creationProgress;
+    private float _destructionProgress;
+
     private List<Shape> _shapes;
 
     public PersisentStorage storage;
@@ -44,16 +53,49 @@ public class Game : PersistableObject
             BeginNewGame();
             storage.Load(this);
         }
+        else if (Input.GetKeyDown(destroyKey))
+        {
+            DestroyShape();
+        }
+
+        _creationProgress += Time.deltaTime * CreationSpeed;
+
+        if (_creationProgress >= 1)
+        {
+            _creationProgress -= 1;
+            CreateShape();
+        }
+
+        _destructionProgress += Time.deltaTime * DestructionSpeed;
+        if (_destructionProgress >= 1)
+        {
+            _destructionProgress -= 1;
+            DestroyShape();
+        }
     }
 
     private void BeginNewGame()
     {
         for (int i = 0; i < _shapes.Count; i++)
         {
-            Destroy(_shapes[i].gameObject);
+            shapeFactory.Reclaim(_shapes[i]);
         }
 
         _shapes.Clear();
+    }
+
+    private void DestroyShape()
+    {
+        if (_shapes.Count > 0)
+        {
+            int index = Random.Range(0, _shapes.Count);
+            shapeFactory.Reclaim(_shapes[index]);
+
+            ///List继承自Array，删除一个元素需要将后面的所有元素向前移动，因此直接将需要删除的元素放到末尾
+            int lastIndex = _shapes.Count - 1;
+            _shapes[index] = _shapes[lastIndex];
+            _shapes.RemoveAt(lastIndex);
+        }
     }
 
 
