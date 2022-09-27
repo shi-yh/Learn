@@ -22,9 +22,11 @@ public class PersisentStorage : MonoBehaviour
 
     public void Load(PersistableObject o)
     {
-        using (var reader = new BinaryReader(File.Open(_savePath, FileMode.Open)))
-        {
-            o.Load(new GameDataReader(reader, -reader.ReadInt32()));
-        }
+        ///协程会导致在文件流关闭后才进行读取数据的操作，所以先预读到内存中
+        byte[] data = File.ReadAllBytes(_savePath);
+
+        var reader = new BinaryReader(new MemoryStream(data));
+        
+        o.Load(new GameDataReader(reader, -reader.ReadInt32()));
     }
 }

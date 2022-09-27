@@ -15,4 +15,12 @@ public class SphereSpawnZone : SpawnZone
         Gizmos.matrix = transform.localToWorldMatrix;
         Gizmos.DrawWireSphere(Vector3.zero,1f);
     }
+
+    public override void Save(GameDataWriter writer)
+    {
+    }
+
+    public override void Load(GameDataReader reader)
+    {
+    }
 }

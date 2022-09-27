@@ -292,6 +292,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnZone: {fileID: 991957270}
+  _persistableObjects:
+  - {fileID: 991957270}
+  - {fileID: 1334568274}
+  - {fileID: 302284988}
+  - {fileID: 1470017644}
+  - {fileID: 2028234268}
 --- !u!4 &933819924
 Transform:
   m_ObjectHideFlags: 0
@@ -360,6 +366,7 @@ MonoBehaviour:
   - {fileID: 302284988}
   - {fileID: 1470017644}
   - {fileID: 2028234268}
+  _sequential: 1
 --- !u!1 &1334568272
 GameObject:
   m_ObjectHideFlags: 0

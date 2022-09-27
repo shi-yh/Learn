@@ -270,14 +270,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e13e5ab2a762c4f499b3e253de47c20e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnZone: {fileID: 0}
   _shapeFactory: {fileID: 11400000, guid: b7e6f6d2b9f0c254ebd4dcc46fa015cc, type: 2}
   createKey: 99
   newGameKey: 110
   saveKey: 115
   loadKey: 108
   destroyKey: 120
-  levelCount: 3
+  levelCount: 4
+  _reseedOnLoad: 0
   storage: {fileID: 2145156803}
 --- !u!4 &1677127543
 Transform:

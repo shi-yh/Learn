@@ -36,4 +36,12 @@ public class CubeSpawnZone : SpawnZone
 
         Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
     }
+
+    public override void Save(GameDataWriter writer)
+    {
+    }
+
+    public override void Load(GameDataReader reader)
+    {
+    }
 }
