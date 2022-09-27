@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,7 +7,11 @@ using Random = UnityEngine.Random;
 
 public class Game : PersistableObject
 {
-    public ShapeFactory shapeFactory;
+    public static Game Instance { get; private set; }
+    
+    public SpawnZone spawnZone;
+    
+    [SerializeField] private ShapeFactory _shapeFactory;
 
     public KeyCode createKey = KeyCode.C;
 
@@ -34,6 +39,11 @@ public class Game : PersistableObject
         _shapes = new List<Shape>();
 
         StartCoroutine(LoadLevel(1));
+    }
+
+    private void OnEnable()
+    {
+        Instance = this;
     }
 
     IEnumerator LoadLevel(int levelIdx)
@@ -95,7 +105,7 @@ public class Game : PersistableObject
     {
         for (int i = 0; i < _shapes.Count; i++)
         {
-            shapeFactory.Reclaim(_shapes[i]);
+            _shapeFactory.Reclaim(_shapes[i]);
         }
 
         _shapes.Clear();
@@ -106,7 +116,7 @@ public class Game : PersistableObject
         if (_shapes.Count > 0)
         {
             int index = Random.Range(0, _shapes.Count);
-            shapeFactory.Reclaim(_shapes[index]);
+            _shapeFactory.Reclaim(_shapes[index]);
 
             ///List继承自Array，删除一个元素需要将后面的所有元素向前移动，因此直接将需要删除的元素放到末尾
             int lastIndex = _shapes.Count - 1;
@@ -144,7 +154,7 @@ public class Game : PersistableObject
             int shapeId = version > 0 ? reader.ReadInt() : 0;
             int materialId = version > 0 ? reader.ReadInt() : 0;
 
-            Shape o = shapeFactory.Get(shapeId, materialId);
+            Shape o = _shapeFactory.Get(shapeId, materialId);
             o.Load(reader);
             _shapes.Add(o);
         }
@@ -153,9 +163,9 @@ public class Game : PersistableObject
 
     void CreateShape()
     {
-        Shape instance = shapeFactory.GetRandom();
+        Shape instance = _shapeFactory.GetRandom();
         Transform t = instance.transform;
-        t.localPosition = Random.insideUnitSphere * 5;
+        t.localPosition = spawnZone.SpawnPoint;
         t.rotation = Random.rotation;
         t.localScale = Vector3.one * Random.Range(0.1f, 1f);
         instance.SetColor(Random.ColorHSV(0, 1, 0.5f, 1f, 0.25f, 1f, 1f, 1f));
