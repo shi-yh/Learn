@@ -6,6 +6,7 @@ public class CubeSpawnZone : SpawnZone
 {
     [SerializeField] private bool _surfaceOnly;
 
+
     public override Vector3 SpawnPoint
     {
         get

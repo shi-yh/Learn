@@ -6,7 +6,53 @@ using Random = UnityEngine.Random;
 
 public abstract class SpawnZone : PersistableObject
 {
+    [SerializeField] private SpawnConfiguration _configuration;
+
     public abstract Vector3 SpawnPoint { get; }
 
-  
+    public virtual void ConfigureSpawn(Shape instance)
+    {
+        Transform t = instance.transform;
+        t.localPosition = SpawnPoint;
+        t.rotation = Random.rotation;
+        t.localScale = Vector3.one * _configuration.scale.RandomValueRange;
+        instance.SetColor(_configuration.color.RandomInRange);
+        instance.AngularVelocity = Random.onUnitSphere * _configuration.angularSpeed.RandomValueRange;
+
+        Vector3 direction;
+
+        switch (_configuration.spawnMovementDirection)
+        {
+            case SpawnConfiguration.SpawnMovementDirection.Forward:
+            {
+                direction = transform.forward;
+                break;
+            }
+            case SpawnConfiguration.SpawnMovementDirection.Upward:
+            {
+                direction = transform.up;
+                break;
+            }
+            case SpawnConfiguration.SpawnMovementDirection.Outward:
+            {
+                direction = (t.localPosition - transform.localPosition).normalized;
+
+                break;
+            }
+            case SpawnConfiguration.SpawnMovementDirection.Random:
+            {
+                direction = Random.onUnitSphere;
+                break;
+            }
+
+            default:
+            {
+                direction = transform.forward;
+                break;
+            }
+        }
+
+
+        instance.Velocity = direction * _configuration.spawnSpeed.RandomValueRange;
+    }
 }

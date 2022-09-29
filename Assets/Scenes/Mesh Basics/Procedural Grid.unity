@@ -332,8 +332,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57813159a4a7fd24ebadb8346c030e46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xSize: 1
-  ySize: 1
+  xSize: 10
+  ySize: 5
 --- !u!23 &1589390756
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -354,7 +354,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: d98213282045b8a4fa8c6b3070a0538d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

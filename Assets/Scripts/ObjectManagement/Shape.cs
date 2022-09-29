@@ -8,11 +8,14 @@ public class Shape : PersistableObject
     private Color _color;
 
     private MeshRenderer _meshRenderer;
-    
+
     private static readonly int colorPropertyId = Shader.PropertyToID("_Color");
     private static MaterialPropertyBlock sharedPropertyBlock;
 
     public int MaterialId { get; private set; }
+    public Vector3 AngularVelocity { get; set; }
+
+    public Vector3 Velocity { get; set; }
 
     private void Awake()
     {
@@ -21,7 +24,6 @@ public class Shape : PersistableObject
 
     public void SetMaterial(Material material, int materialId)
     {
-        
         _meshRenderer.material = material;
 
         MaterialId = materialId;
@@ -32,13 +34,12 @@ public class Shape : PersistableObject
         _color = color;
 
         ///对材质属性改变会导致创建一个新的材质，使用MaterialPropertyBlock可以避免这种情况
-
-        if (sharedPropertyBlock==null)
+        if (sharedPropertyBlock == null)
         {
-            sharedPropertyBlock  = new MaterialPropertyBlock();
-
+            sharedPropertyBlock = new MaterialPropertyBlock();
         }
-        sharedPropertyBlock.SetColor(colorPropertyId,color);
+
+        sharedPropertyBlock.SetColor(colorPropertyId, color);
         _meshRenderer.SetPropertyBlock(sharedPropertyBlock);
     }
 
@@ -63,11 +64,21 @@ public class Shape : PersistableObject
     {
         base.Save(writer);
         writer.Write(_color);
+        writer.Write(AngularVelocity);
+        writer.Write(Velocity);
     }
 
     public override void Load(GameDataReader reader)
     {
         base.Load(reader);
         SetColor(reader.Version > 0 ? reader.ReadColor() : Color.white);
+        AngularVelocity = reader.Version >= 3 ? reader.ReadVector3() : Vector3.zero;
+        Velocity = reader.Version >= 3 ? reader.ReadVector3() : Vector3.zero;
+    }
+
+    public void GameUpdate()
+    {
+        transform.Rotate(AngularVelocity * Time.deltaTime);
+        transform.localPosition += Velocity * Time.deltaTime;
     }
 }

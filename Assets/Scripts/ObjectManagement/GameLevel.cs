@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameLevel : PersistableObject
 {
@@ -44,4 +45,12 @@ public class GameLevel : PersistableObject
             _persistableObjects[i].Load(reader);
         }
     }
+    
+    
+    public void ConfigureSpawn(Shape instance)
+    {
+        _spawnZone.ConfigureSpawn(instance);
+    }
+
+    
 }

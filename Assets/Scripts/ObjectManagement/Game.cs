@@ -27,7 +27,7 @@ public class Game : PersistableObject
 
     public PersisentStorage storage;
 
-    private const int SAVE_VERSION = 2;
+    private const int SAVE_VERSION = 3;
 
     private int _loadSceneIdx;
 
@@ -159,13 +159,12 @@ public class Game : PersistableObject
         }
 
         StartCoroutine(LoadGame(reader));
-
     }
 
     private IEnumerator LoadGame(GameDataReader reader)
     {
         int version = reader.Version;
-        
+
         int count = version <= 0 ? -version : reader.ReadInt();
 
         if (version >= 2)
@@ -179,10 +178,10 @@ public class Game : PersistableObject
         }
 
         yield return LoadLevel(version < 2 ? 1 : reader.ReadInt());
-        
+
         GameLevel.current.Load(reader);
-        
-        
+
+
         for (int i = 0; i < count; i++)
         {
             int shapeId = version > 0 ? reader.ReadInt() : 0;
@@ -192,18 +191,24 @@ public class Game : PersistableObject
             o.Load(reader);
             _shapes.Add(o);
         }
-        
     }
 
 
     void CreateShape()
     {
         Shape instance = _shapeFactory.GetRandom();
-        Transform t = instance.transform;
-        t.localPosition = GameLevel.current.SpawnPoint;
-        t.rotation = Random.rotation;
-        t.localScale = Vector3.one * Random.Range(0.1f, 1f);
-        instance.SetColor(Random.ColorHSV(0, 1, 0.5f, 1f, 0.25f, 1f, 1f, 1f));
+
+        GameLevel.current.ConfigureSpawn(instance);
+        
         _shapes.Add(instance);
+        
+    }
+
+    private void FixedUpdate()
+    {
+        for (int i = 0; i < _shapes.Count; i++)
+        {
+            _shapes[i].GameUpdate();
+        }
     }
 }
