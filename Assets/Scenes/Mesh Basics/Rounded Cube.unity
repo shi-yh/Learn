@@ -348,8 +348,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xSize: 3
-  ySize: 2
-  zSize: 4
+  ySize: 3
+  zSize: 3
+  roundness: 1
 --- !u!33 &633225344
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -378,6 +379,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
+  - {fileID: 2100000, guid: 104b317e2d59871438ccbc07cb7532cb, type: 2}
+  - {fileID: 2100000, guid: f333b056c9dfdcc4487edf190b1b948e, type: 2}
   - {fileID: 2100000, guid: d98213282045b8a4fa8c6b3070a0538d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
