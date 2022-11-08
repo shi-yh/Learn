@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Mesh Basics/Rounded Cube.unity
-    guid: bd41628ec0019644a9ee94d56b77c617
-  - enabled: 1
     path: Assets/Scenes/ObjectManagement/MainScene.unity
     guid: 2216c76b8424cc24689d330d7ef90110
   - enabled: 1

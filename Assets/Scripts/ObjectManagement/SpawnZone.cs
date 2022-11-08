@@ -10,13 +10,36 @@ public abstract class SpawnZone : PersistableObject
 
     public abstract Vector3 SpawnPoint { get; }
 
-    public virtual void ConfigureSpawn(Shape instance)
+    public virtual Shape SpawnShape()
     {
+        int factoryIndex = Random.Range(0, _configuration.factoryps.Length);
+
+        Shape instance = _configuration.factoryps[factoryIndex].GetRandom();
+        
         Transform t = instance.transform;
         t.localPosition = SpawnPoint;
         t.rotation = Random.rotation;
         t.localScale = Vector3.one * _configuration.scale.RandomValueRange;
-        instance.SetColor(_configuration.color.RandomInRange);
+
+        if (_configuration.uniformColor)
+        {
+            Color color = _configuration.color.RandomInRange;
+
+            for (int i = 0; i < instance.ColorCount; i++)
+            {
+                instance.SetColor(color, i);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < instance.ColorCount; i++)
+            {
+                Color color = _configuration.color.RandomInRange;
+
+                instance.SetColor(color, i);
+            }
+        }
+
         instance.AngularVelocity = Random.onUnitSphere * _configuration.angularSpeed.RandomValueRange;
 
         Vector3 direction;
@@ -54,5 +77,7 @@ public abstract class SpawnZone : PersistableObject
 
 
         instance.Velocity = direction * _configuration.spawnSpeed.RandomValueRange;
+
+        return instance;
     }
 }

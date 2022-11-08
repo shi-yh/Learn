@@ -11,17 +11,17 @@ public class SpawnConfiguration
         Random
     }
 
+    public ShapeFactory[] factoryps;
 
-     public SpawnMovementDirection spawnMovementDirection;
+    public SpawnMovementDirection spawnMovementDirection;
 
-     public FloatRange spawnSpeed;
+    public FloatRange spawnSpeed;
 
-     public FloatRange angularSpeed;
+    public FloatRange angularSpeed;
 
-     public FloatRange scale;
+    public FloatRange scale;
 
-     public ColorRangeHSV color;
+    public ColorRangeHSV color;
 
-
+    public bool uniformColor;
 }
-

@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 
 public class Game : PersistableObject
 {
-    [SerializeField] private ShapeFactory _shapeFactory;
+    [SerializeField] private ShapeFactory[] _shapeFactories;
 
     public KeyCode createKey = KeyCode.C;
 
@@ -27,7 +27,7 @@ public class Game : PersistableObject
 
     public PersisentStorage storage;
 
-    private const int SAVE_VERSION = 3;
+    private const int SAVE_VERSION = 5;
 
     private int _loadSceneIdx;
 
@@ -45,6 +45,17 @@ public class Game : PersistableObject
     {
         BeginNewGame();
         _mainRandomState = Random.state;
+    }
+
+    private void OnEnable()
+    {
+        if (_shapeFactories[0].FactoryId != 0)
+        {
+            for (int i = 0; i < _shapeFactories.Length; i++)
+            {
+                _shapeFactories[i].FactoryId = i;
+            }
+        }
     }
 
 
@@ -113,7 +124,7 @@ public class Game : PersistableObject
 
         for (int i = 0; i < _shapes.Count; i++)
         {
-            _shapeFactory.Reclaim(_shapes[i]);
+            _shapes[i].Recycle();
         }
 
         _shapes.Clear();
@@ -124,7 +135,7 @@ public class Game : PersistableObject
         if (_shapes.Count > 0)
         {
             int index = Random.Range(0, _shapes.Count);
-            _shapeFactory.Reclaim(_shapes[index]);
+            _shapes[index].Recycle();
 
             ///List继承自Array，删除一个元素需要将后面的所有元素向前移动，因此直接将需要删除的元素放到末尾
             int lastIndex = _shapes.Count - 1;
@@ -142,6 +153,7 @@ public class Game : PersistableObject
         GameLevel.current.Save(writer);
         for (int i = 0; i < _shapes.Count; i++)
         {
+            writer.Write(_shapes[i].OriginFactory.FactoryId);
             writer.Write(_shapes[i].ShapeId);
             writer.Write(_shapes[i].MaterialId);
             _shapes[i].Save(writer);
@@ -184,10 +196,11 @@ public class Game : PersistableObject
 
         for (int i = 0; i < count; i++)
         {
+            int factoryId = version >= 5 ? reader.ReadInt() : 0;
             int shapeId = version > 0 ? reader.ReadInt() : 0;
             int materialId = version > 0 ? reader.ReadInt() : 0;
 
-            Shape o = _shapeFactory.Get(shapeId, materialId);
+            Shape o = _shapeFactories[factoryId].Get(shapeId, materialId);
             o.Load(reader);
             _shapes.Add(o);
         }
@@ -196,12 +209,7 @@ public class Game : PersistableObject
 
     void CreateShape()
     {
-        Shape instance = _shapeFactory.GetRandom();
-
-        GameLevel.current.ConfigureSpawn(instance);
-        
-        _shapes.Add(instance);
-        
+        _shapes.Add(GameLevel.current.SpawnShape());
     }
 
     private void FixedUpdate()

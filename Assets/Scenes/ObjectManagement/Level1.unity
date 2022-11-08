@@ -180,6 +180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 665443107}
   - component: {fileID: 665443106}
+  - component: {fileID: 665443108}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -264,6 +265,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!114 &665443108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 665443105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1 &693242687
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,26 +315,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _configuration:
-    spawnMovementDirection: 0
+    factoryps:
+    - {fileID: 11400000, guid: dff7f80999603464d9d664998a6ceac1, type: 2}
+    - {fileID: 11400000, guid: b7e6f6d2b9f0c254ebd4dcc46fa015cc, type: 2}
+    spawnMovementDirection: 3
     spawnSpeed:
-      min: 0
-      max: 0
+      min: 2
+      max: 5
     angularSpeed:
-      min: 0
-      max: 0
+      min: 3
+      max: 4
     scale:
-      min: 0
-      max: 0
+      min: 0.5
+      max: 2
     color:
       hue:
-        min: 0
-        max: 0.42748094
+        min: 0.20610687
+        max: 0.63358796
       saturation:
-        min: 0
-        max: 0.4351145
+        min: 0.4274809
+        max: 0.8625954
       value:
-        min: 0
-        max: 0.4198473
+        min: 0.24427482
+        max: 0.57251906
+    uniformColor: 0
   _surfaceOnly: 0
 --- !u!4 &693242689
 Transform:

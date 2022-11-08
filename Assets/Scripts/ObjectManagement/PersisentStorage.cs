@@ -7,7 +7,7 @@ public class PersisentStorage : MonoBehaviour
 
     private void Awake()
     {
-        _savePath = Path.Combine(Application.persistentDataPath, "saveFile");
+         _savePath = Path.Combine(Application.persistentDataPath, "saveFile");
     }
 
 

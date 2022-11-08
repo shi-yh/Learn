@@ -27,11 +27,11 @@ public class CompositeSpawnZone : SpawnZone
         _nextSequentialIndex = reader.ReadInt();
     }
 
-    public override void ConfigureSpawn(Shape instance)
+    public override Shape SpawnShape()
     {
         if (!_overrideConfig)
         {
-            base.ConfigureSpawn(instance);
+            return base.SpawnShape();
         }
         else
         {
@@ -50,7 +50,7 @@ public class CompositeSpawnZone : SpawnZone
                 index = Random.Range(0, _spawnZones.Length);
             }
 
-            _spawnZones[index].ConfigureSpawn(instance);
+            return _spawnZones[index].SpawnShape();
         }
     }
 }

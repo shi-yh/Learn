@@ -45,12 +45,10 @@ public class GameLevel : PersistableObject
             _persistableObjects[i].Load(reader);
         }
     }
-    
-    
-    public void ConfigureSpawn(Shape instance)
-    {
-        _spawnZone.ConfigureSpawn(instance);
-    }
 
-    
+
+    public Shape SpawnShape()
+    {
+        return _spawnZone.SpawnShape();
+    }
 }

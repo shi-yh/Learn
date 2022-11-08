@@ -167,6 +167,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd43d818f2860b4e862ac8037687092, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _configuration:
+    factoryps:
+    - {fileID: 11400000, guid: b7e6f6d2b9f0c254ebd4dcc46fa015cc, type: 2}
+    - {fileID: 11400000, guid: dff7f80999603464d9d664998a6ceac1, type: 2}
+    spawnMovementDirection: 0
+    spawnSpeed:
+      min: 0
+      max: 0
+    angularSpeed:
+      min: 0
+      max: 0
+    scale:
+      min: 0
+      max: 0
+    color:
+      hue:
+        min: 0
+        max: 0
+      saturation:
+        min: 0
+        max: 0
+      value:
+        min: 0
+        max: 0
+    uniformColor: 0
   _surfaceOnly: 0
 --- !u!1 &665443105
 GameObject:
@@ -306,6 +331,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbd43d818f2860b4e862ac8037687092, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _configuration:
+    factoryps:
+    - {fileID: 11400000, guid: b7e6f6d2b9f0c254ebd4dcc46fa015cc, type: 2}
+    - {fileID: 11400000, guid: dff7f80999603464d9d664998a6ceac1, type: 2}
+    spawnMovementDirection: 0
+    spawnSpeed:
+      min: 0
+      max: 0
+    angularSpeed:
+      min: 0
+      max: 0
+    scale:
+      min: 0
+      max: 0
+    color:
+      hue:
+        min: 0
+        max: 0
+      saturation:
+        min: 0
+        max: 0
+      value:
+        min: 0
+        max: 0
+    uniformColor: 0
   _surfaceOnly: 0
 --- !u!1 &933819922
 GameObject:
@@ -448,10 +498,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05df4019f0c56484c97b4704ea26f467, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _configuration:
+    factoryps:
+    - {fileID: 11400000, guid: dff7f80999603464d9d664998a6ceac1, type: 2}
+    - {fileID: 11400000, guid: b7e6f6d2b9f0c254ebd4dcc46fa015cc, type: 2}
+    spawnMovementDirection: 0
+    spawnSpeed:
+      min: 0
+      max: 0
+    angularSpeed:
+      min: 0
+      max: 0
+    scale:
+      min: 0
+      max: 0
+    color:
+      hue:
+        min: 0
+        max: 0
+      saturation:
+        min: 0
+        max: 0
+      value:
+        min: 0
+        max: 0
+    uniformColor: 0
   _spawnZones:
   - {fileID: 41049197}
   - {fileID: 765695871}
   _sequential: 1
+  _overrideConfig: 0
 --- !u!1 &1993077146
 GameObject:
   m_ObjectHideFlags: 0

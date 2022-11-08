@@ -15,6 +15,27 @@ public class ShapeFactory : ScriptableObject
 
     private List<Shape>[] _pools;
 
+    
+    [System.NonSerialized]
+    private int _factoryId = int.MinValue;
+
+    public int FactoryId
+    {
+        get => _factoryId;
+        set
+        {
+            if (_factoryId == int.MinValue && value != int.MinValue)
+            {
+                _factoryId = value;
+            }
+            else
+            {
+                Debug.Log("Not allowed to change factory Id");
+            }
+        }
+    }
+    
+    
     void CreatePools()
     {
         _pools = new List<Shape>[_prefabs.Length];
@@ -55,6 +76,8 @@ public class ShapeFactory : ScriptableObject
             {
                 instance = Instantiate(_prefabs[shapeId]);
 
+                instance.OriginFactory = this;
+                
                 instance.ShapeId = shapeId;
                 
                 SceneManager.MoveGameObjectToScene(instance.gameObject,_poolScene);
@@ -64,7 +87,6 @@ public class ShapeFactory : ScriptableObject
         else
         {
             instance = Instantiate(_prefabs[shapeId]);
-
             instance.ShapeId = shapeId;
         }
 
