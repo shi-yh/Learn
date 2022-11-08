@@ -49,7 +49,6 @@ float2 GetUV(uint3 id)
     return (id.xy + 0.5) * _Step - 1.0;
 }
 
-///
 void SetPosition(uint3 id, float3 position)
 {
     ///我们每个小组都计算了一个有8个8个点的网格。
