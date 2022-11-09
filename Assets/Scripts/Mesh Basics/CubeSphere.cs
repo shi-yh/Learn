@@ -22,10 +22,10 @@ public class CubeSphere : MonoBehaviour
 
     private void Awake()
     {
-        StartCoroutine(Generate());
+        Generate();
     }
 
-    private IEnumerator GenerateVertices()
+    private void GenerateVertices()
     {
         ///首先有八个角顶点
         int cornerVertices = 8;
@@ -53,26 +53,22 @@ public class CubeSphere : MonoBehaviour
             for (int x = 0; x <= gridSize; x++)
             {
                 SetVertex(index++, x, y, 0);
-                yield return _wait;
             }
 
             for (int z = 1; z <= gridSize; z++)
             {
                 SetVertex(index++, gridSize, y, z);
-                yield return _wait;
             }
 
             for (int x = gridSize - 1; x >= 0; x--)
             {
                 SetVertex(index++, x, y, gridSize);
-                yield return _wait;
             }
 
 
             for (int z = gridSize - 1; z > 0; z--)
             {
                 SetVertex(index++, 0, y, z);
-                yield return _wait;
             }
         }
 
@@ -85,7 +81,6 @@ public class CubeSphere : MonoBehaviour
             for (int x = 1; x < gridSize; x++)
             {
                 SetVertex(index++, x, gridSize, z);
-                yield return _wait;
             }
         }
 
@@ -94,7 +89,6 @@ public class CubeSphere : MonoBehaviour
             for (int x = 1; x < gridSize; x++)
             {
                 SetVertex(index++, x, 0, z);
-                yield return _wait;
             }
         }
 
@@ -134,7 +128,7 @@ public class CubeSphere : MonoBehaviour
         gameObject.AddComponent<SphereCollider>();
     }
 
-    private IEnumerator GenerateTriangles()
+    private void GenerateTriangles()
     {
         int[] trianglesZ = new int[gridSize * gridSize * 12];
         int[] trianglesX = new int[gridSize * gridSize * 12];
@@ -182,9 +176,7 @@ public class CubeSphere : MonoBehaviour
 
         #endregion
 
-
-        yield return _wait;
-
+        
         _mesh.subMeshCount = 3;
         _mesh.SetTriangles(trianglesZ, 0);
         _mesh.SetTriangles(trianglesX, 1);
@@ -287,15 +279,15 @@ public class CubeSphere : MonoBehaviour
         return index;
     }
 
-    private IEnumerator Generate()
+    private void Generate()
     {
         GetComponent<MeshFilter>().mesh = _mesh = new Mesh();
 
         _mesh.name = "Procedural Sphere";
+        
+        GenerateVertices();
 
-        yield return GenerateVertices();
-
-        yield return GenerateTriangles();
+        GenerateTriangles();
 
         GenerateColliders();
     }

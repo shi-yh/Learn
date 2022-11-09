@@ -228,6 +228,7 @@ GameObject:
   - component: {fileID: 406528339}
   - component: {fileID: 406528338}
   - component: {fileID: 406528337}
+  - component: {fileID: 406528340}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -301,6 +302,65 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 40, y: -60, z: 0}
+--- !u!114 &406528340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 406528336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5628c7bfbbb1bfb468e387b5499d3955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  force: 10
+  forceOffset: 0.1
+--- !u!1 &1416867649
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1416867651}
+  - component: {fileID: 1416867650}
+  m_Layer: 0
+  m_Name: CircleGizmos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1416867650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1416867649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26df9a72269dfe24884a4225b027923e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resolution: 10
+--- !u!4 &1416867651
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1416867649}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.17866898, y: 0.3139255, z: -0.42807394}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2123160269
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,8 +374,9 @@ GameObject:
   - component: {fileID: 2123160271}
   - component: {fileID: 2123160274}
   - component: {fileID: 2123160275}
+  - component: {fileID: 2123160276}
   m_Layer: 0
-  m_Name: 'GameObject '
+  m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -416,5 +477,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09b08f2b9b890064e9caf884d516f97c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: 8
+  gridSize: 20
   radius: 2
+--- !u!114 &2123160276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2123160269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0690c83a4c860f45b5f8a3671c29e62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  springForce: 5
+  damping: 3
