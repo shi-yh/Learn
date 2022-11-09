@@ -416,5 +416,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09b08f2b9b890064e9caf884d516f97c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: 5
-  radius: 1
+  gridSize: 8
+  radius: 2
