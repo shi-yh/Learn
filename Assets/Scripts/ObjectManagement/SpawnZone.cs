@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public abstract class SpawnZone : PersistableObject
@@ -15,7 +16,7 @@ public abstract class SpawnZone : PersistableObject
         int factoryIndex = Random.Range(0, _configuration.factoryps.Length);
 
         Shape instance = _configuration.factoryps[factoryIndex].GetRandom();
-        
+
         Transform t = instance.transform;
         t.localPosition = SpawnPoint;
         t.rotation = Random.rotation;
@@ -40,11 +41,31 @@ public abstract class SpawnZone : PersistableObject
             }
         }
 
-        instance.AngularVelocity = Random.onUnitSphere * _configuration.angularSpeed.RandomValueRange;
+        float angularSpeed = _configuration.angularSpeed.RandomValueRange;
+        if (angularSpeed != 0f)
+        {
+            var rotation = instance.AddBehavior<RotationShapeBehavior>();
+            rotation.angularVelocity = Random.onUnitSphere * angularSpeed;
+        }
 
+        
+        float speed = _configuration.spawnSpeed.RandomValueRange;
+
+        if (speed != 0)
+        {
+            var movement = instance.AddBehavior<MovementShapeBehavior>();
+            movement.velocity = GetDirectionVector(_configuration.spawnMovementDirection,t) * speed;
+        }
+
+        SetupOscillation(instance);
+        return instance;
+    }
+
+    private Vector3 GetDirectionVector(SpawnConfiguration.SpawnMovementDirection spawnMovementDirection,Transform t)
+    {
         Vector3 direction;
 
-        switch (_configuration.spawnMovementDirection)
+        switch (spawnMovementDirection)
         {
             case SpawnConfiguration.SpawnMovementDirection.Forward:
             {
@@ -75,9 +96,22 @@ public abstract class SpawnZone : PersistableObject
             }
         }
 
-
-        instance.Velocity = direction * _configuration.spawnSpeed.RandomValueRange;
-
-        return instance;
+        return direction;
     }
+
+    void SetupOscillation(Shape shape)
+    {
+        float amplitude = _configuration.oscillationAmplitude.RandomValueRange;
+        float frequency = _configuration.oscillationFrequency.RandomValueRange;
+
+        if (amplitude==0f|| frequency==0f)
+        {
+            return;
+        }
+
+        var oscillation = shape.AddBehavior<OscillationShapeBehavior>();
+        oscillation.Offset = GetDirectionVector(_configuration.oscillationDirection, shape.transform);
+        oscillation.Frequency = frequency;
+    }
+    
 }

@@ -24,4 +24,10 @@ public class SpawnConfiguration
     public ColorRangeHSV color;
 
     public bool uniformColor;
+
+    public SpawnMovementDirection oscillationDirection;
+
+    public FloatRange oscillationAmplitude;
+
+    public FloatRange oscillationFrequency;
 }
