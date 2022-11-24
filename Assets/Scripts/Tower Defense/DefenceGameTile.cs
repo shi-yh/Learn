@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
+
+
 public class DefenceGameTile : MonoBehaviour
 {
+    
+    
     [SerializeField] private Transform _arrow = default;
 
     private DefenceGameTile _north, _east, _south, _west;
@@ -21,6 +25,8 @@ public class DefenceGameTile : MonoBehaviour
     private int _distance;
 
     public bool HasPath => _distance != int.MaxValue;
+    
+    
 
     #endregion
 
