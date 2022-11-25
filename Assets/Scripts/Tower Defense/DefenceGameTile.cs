@@ -7,7 +7,7 @@ using UnityEngine;
 public class DefenceGameTile : MonoBehaviour
 {
     [SerializeField] private Transform _arrow = default;
-
+    
     private DefenceGameTile _north, _east, _south, _west;
 
     private GameTileContent _content;
@@ -84,7 +84,7 @@ public class DefenceGameTile : MonoBehaviour
     {
         _arrow.gameObject.SetActive(false);
     }
-    
+
     public void ShowPath()
     {
         if (_distance == 0)

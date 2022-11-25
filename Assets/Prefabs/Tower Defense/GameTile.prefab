@@ -59,12 +59,12 @@ GameObject:
   - component: {fileID: 3878906927983036117}
   - component: {fileID: 3958132782225241706}
   m_Layer: 0
-  m_Name: Quad
+  m_Name: Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5206647571986940027
 Transform:
   m_ObjectHideFlags: 0

@@ -8,6 +8,8 @@ public class DefenceGameBoard : MonoBehaviour
 
     [SerializeField] private DefenceGameTile _tilePrefab = default;
 
+    [SerializeField] private Texture2D _gridTexture = default;
+
 
     private Vector2Int _size;
 
@@ -17,7 +19,7 @@ public class DefenceGameBoard : MonoBehaviour
 
     private DefenceGameTileFactory _contentFactory;
 
-    private bool _showPath,_showGrid;
+    private bool _showPath, _showGrid;
 
     public bool ShowPath
     {
@@ -38,6 +40,27 @@ public class DefenceGameBoard : MonoBehaviour
                 {
                     tile.HidePath();
                 }
+            }
+        }
+    }
+
+    public bool ShowGrid
+    {
+        get => _showGrid;
+        set
+        {
+            _showGrid = value;
+
+            Material m = _ground.GetComponent<MeshRenderer>().material;
+
+            if (_showGrid)
+            {
+                m.mainTexture = _gridTexture;
+                m.SetTextureScale("_MainTex", _size);
+            }
+            else
+            {
+                m.mainTexture = null;
             }
         }
     }
@@ -129,7 +152,7 @@ public class DefenceGameBoard : MonoBehaviour
                 VARIABLE.ShowPath();
             }
         }
-        
+
         return true;
     }
 

@@ -48,6 +48,11 @@ public class DefenceGame : MonoBehaviour
         {
             _board.ShowPath = !_board.ShowPath;
         }
+        
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            _board.ShowGrid = !_board.ShowGrid;
+        }
     }
 
     private void HandleTouch()
