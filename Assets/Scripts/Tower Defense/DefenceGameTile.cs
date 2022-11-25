@@ -4,14 +4,28 @@ using Unity.Mathematics;
 using UnityEngine;
 
 
-
 public class DefenceGameTile : MonoBehaviour
 {
-    
-    
     [SerializeField] private Transform _arrow = default;
 
     private DefenceGameTile _north, _east, _south, _west;
+
+    private GameTileContent _content;
+
+    public GameTileContent Content
+    {
+        get => _content;
+        set
+        {
+            if (_content != null)
+            {
+                _content.Recycle();
+            }
+
+            _content = value;
+            _content.transform.localPosition = transform.localPosition;
+        }
+    }
 
 
     #region 寻路相关
@@ -25,8 +39,6 @@ public class DefenceGameTile : MonoBehaviour
     private int _distance;
 
     public bool HasPath => _distance != int.MaxValue;
-    
-    
 
     #endregion
 
@@ -46,7 +58,7 @@ public class DefenceGameTile : MonoBehaviour
 
         neighbor._distance = _distance + 1;
         neighbor._nextOnPath = this;
-        return neighbor;
+        return neighbor.Content.Type != DefenceGameTileContentType.Wall ? neighbor : null;
     }
 
 
@@ -68,6 +80,11 @@ public class DefenceGameTile : MonoBehaviour
         _nextOnPath = null;
     }
 
+    public void HidePath()
+    {
+        _arrow.gameObject.SetActive(false);
+    }
+    
     public void ShowPath()
     {
         if (_distance == 0)

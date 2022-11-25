@@ -15,10 +15,40 @@ public class DefenceGameBoard : MonoBehaviour
 
     private Queue<DefenceGameTile> _searchFrontier = new Queue<DefenceGameTile>();
 
+    private DefenceGameTileFactory _contentFactory;
 
-    public void Initialize(Vector2Int size)
+    private bool _showPath,_showGrid;
+
+    public bool ShowPath
+    {
+        get => _showPath;
+        set
+        {
+            _showPath = value;
+            if (_showPath)
+            {
+                foreach (DefenceGameTile tile in _tiles)
+                {
+                    tile.ShowPath();
+                }
+            }
+            else
+            {
+                foreach (DefenceGameTile tile in _tiles)
+                {
+                    tile.HidePath();
+                }
+            }
+        }
+    }
+
+
+    public void Initialize(Vector2Int size, DefenceGameTileFactory contentFactory)
     {
         this._size = size;
+
+        this._contentFactory = contentFactory;
+
         _ground.localScale = new Vector3(size.x, size.y, 1f);
 
         _tiles = new DefenceGameTile[_size.x * _size.y];
@@ -43,21 +73,33 @@ public class DefenceGameBoard : MonoBehaviour
                 {
                     DefenceGameTile.MakeNorthSouthNeigbors(tile, _tiles[index - size.x]);
                 }
+
+                tile.Content = contentFactory.Get(DefenceGameTileContentType.Empty);
             }
         }
 
-        FindPaths();
+        ToggleDestination(_tiles[0]);
     }
 
-    private void FindPaths()
+    private bool FindPaths()
     {
         foreach (DefenceGameTile defenceGameTile in _tiles)
         {
-            defenceGameTile.ClearPath();
+            if (defenceGameTile.Content.Type == DefenceGameTileContentType.Destination)
+            {
+                defenceGameTile.BecomeDestination();
+                _searchFrontier.Enqueue(defenceGameTile);
+            }
+            else
+            {
+                defenceGameTile.ClearPath();
+            }
         }
 
-        _tiles[0].BecomeDestination();
-        _searchFrontier.Enqueue(_tiles[0]);
+        if (_searchFrontier.Count == 0)
+        {
+            return false;
+        }
 
         while (_searchFrontier.Count > 0)
         {
@@ -71,9 +113,79 @@ public class DefenceGameBoard : MonoBehaviour
             }
         }
 
-        foreach (var VARIABLE in _tiles)
+        ///防止因为添加墙壁导致的闭合死路
+        foreach (DefenceGameTile tile in _tiles)
         {
-            VARIABLE.ShowPath();
+            if (!tile.HasPath)
+            {
+                return false;
+            }
         }
+
+        if (_showPath)
+        {
+            foreach (var VARIABLE in _tiles)
+            {
+                VARIABLE.ShowPath();
+            }
+        }
+        
+        return true;
+    }
+
+    public void ToggleDestination(DefenceGameTile tile)
+    {
+        if (tile.Content.Type == DefenceGameTileContentType.Destination)
+        {
+            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+
+            if (!FindPaths())
+            {
+                tile.Content = _contentFactory.Get(DefenceGameTileContentType.Destination);
+                FindPaths();
+            }
+        }
+        else
+        {
+            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Destination);
+            FindPaths();
+        }
+    }
+
+    public void ToggleWall(DefenceGameTile tile)
+    {
+        if (tile.Content.Type == DefenceGameTileContentType.Wall)
+        {
+            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+
+            FindPaths();
+        }
+        else if (tile.Content.Type == DefenceGameTileContentType.Empty)
+        {
+            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Wall);
+
+            if (!FindPaths())
+            {
+                tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+                FindPaths();
+            }
+        }
+    }
+
+
+    public DefenceGameTile GetTile(Ray ray)
+    {
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            int x = (int) (hit.point.x + _size.x * 0.5f);
+            int y = (int) (hit.point.z + _size.y * 0.5f);
+
+            if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
+            {
+                return _tiles[x + y * _size.x];
+            }
+        }
+
+        return null;
     }
 }
