@@ -4,10 +4,11 @@ using Unity.Mathematics;
 using UnityEngine;
 
 
+
 public class DefenceGameTile : MonoBehaviour
 {
     [SerializeField] private Transform _arrow = default;
-    
+
     private DefenceGameTile _north, _east, _south, _west;
 
     private GameTileContent _content;
@@ -27,9 +28,6 @@ public class DefenceGameTile : MonoBehaviour
         }
     }
 
-
-    #region 寻路相关
-
     ///下一个瓦片   
     private DefenceGameTile _nextOnPath;
 
@@ -40,14 +38,19 @@ public class DefenceGameTile : MonoBehaviour
 
     public bool HasPath => _distance != int.MaxValue;
 
-    #endregion
+    public DefenceGameTile NextTileOnPath => _nextOnPath;
 
-    public DefenceGameTile GrowPathNorth() => GrowPathTo(_north);
-    public DefenceGameTile GrowPathEast() => GrowPathTo(_east);
-    public DefenceGameTile GrowPathSouth() => GrowPathTo(_south);
-    public DefenceGameTile GrowPathWest() => GrowPathTo(_west);
+    public Vector3 ExitPoint { get; private set; }
 
-    DefenceGameTile GrowPathTo(DefenceGameTile neighbor)
+    public Direction PathDirection { get; private set; }
+
+
+    public DefenceGameTile GrowPathNorth() => GrowPathTo(_north, Direction.North);
+    public DefenceGameTile GrowPathEast() => GrowPathTo(_east, Direction.East);
+    public DefenceGameTile GrowPathSouth() => GrowPathTo(_south, Direction.South);
+    public DefenceGameTile GrowPathWest() => GrowPathTo(_west, Direction.West);
+
+    DefenceGameTile GrowPathTo(DefenceGameTile neighbor, Direction direction)
     {
         Debug.Assert(HasPath, "No Path");
 
@@ -58,6 +61,11 @@ public class DefenceGameTile : MonoBehaviour
 
         neighbor._distance = _distance + 1;
         neighbor._nextOnPath = this;
+
+        neighbor.ExitPoint = (neighbor.transform.localPosition + transform.localPosition) * 0.5f;
+
+        neighbor.PathDirection = direction;
+
         return neighbor.Content.Type != DefenceGameTileContentType.Wall ? neighbor : null;
     }
 
@@ -78,6 +86,7 @@ public class DefenceGameTile : MonoBehaviour
     {
         _distance = 0;
         _nextOnPath = null;
+        ExitPoint = transform.localPosition;
     }
 
     public void HidePath()

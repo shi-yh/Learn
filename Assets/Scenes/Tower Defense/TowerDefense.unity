@@ -361,6 +361,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _boradSize: {x: 11, y: 11}
   _board: {fileID: 1681362319}
+  _tileContectFactory: {fileID: 11400000, guid: a8538d18100b9fc4ea52d7967a453849, type: 2}
 --- !u!1 &1184779953
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,6 +477,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _ground: {fileID: 72804883}
   _tilePrefab: {fileID: 2301719989851271712, guid: b61840c8dbcbac94584b1c9f6ec06c5b, type: 3}
+  _gridTexture: {fileID: 2800000, guid: 89e5b89b83c8db04f8f6f35e6404ad3b, type: 3}
 --- !u!4 &1681362320
 Transform:
   m_ObjectHideFlags: 0

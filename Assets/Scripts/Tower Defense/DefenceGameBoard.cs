@@ -21,6 +21,10 @@ public class DefenceGameBoard : MonoBehaviour
 
     private bool _showPath, _showGrid;
 
+    private List<DefenceGameTile> _spawnPoints = new List<DefenceGameTile>();
+
+    public int SpawnPointCount => _spawnPoints.Count;
+
     public bool ShowPath
     {
         get => _showPath;
@@ -102,6 +106,13 @@ public class DefenceGameBoard : MonoBehaviour
         }
 
         ToggleDestination(_tiles[0]);
+        ToggleSpawnPoint(_tiles[^1]);
+    }
+
+
+    public DefenceGameTile GetSpawnPoint(int index)
+    {
+        return _spawnPoints[index];
     }
 
     private bool FindPaths()
@@ -192,6 +203,23 @@ public class DefenceGameBoard : MonoBehaviour
                 tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
                 FindPaths();
             }
+        }
+    }
+
+    public void ToggleSpawnPoint(DefenceGameTile tile)
+    {
+        if (tile.Content.Type == DefenceGameTileContentType.SpawnPoint)
+        {
+            if (_spawnPoints.Count > 1)
+            {
+                _spawnPoints.Remove(tile);
+                tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+            }
+        }
+        else if (tile.Content.Type == DefenceGameTileContentType.Empty)
+        {
+            tile.Content = _contentFactory.Get(DefenceGameTileContentType.SpawnPoint);
+            _spawnPoints.Add(tile);
         }
     }
 

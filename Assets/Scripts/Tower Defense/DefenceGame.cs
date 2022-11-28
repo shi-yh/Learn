@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class DefenceGame : MonoBehaviour
 {
@@ -11,6 +12,15 @@ public class DefenceGame : MonoBehaviour
 
     [SerializeField] private DefenceGameTileFactory _tileContectFactory = default;
 
+    [SerializeField] private DefenceEnemyFactory _enemyFactory;
+
+    [SerializeField, Range(0.1f, 10f)] private float _spawnSpeed = 1;
+
+    private DefenceEnemyCollection _enemies = new DefenceEnemyCollection();
+    
+
+    private float _spwanProgress;
+    
     private Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
 
     private void Awake()
@@ -48,11 +58,30 @@ public class DefenceGame : MonoBehaviour
         {
             _board.ShowPath = !_board.ShowPath;
         }
-        
+
         if (Input.GetKeyDown(KeyCode.G))
         {
             _board.ShowGrid = !_board.ShowGrid;
         }
+
+        _spwanProgress += _spawnSpeed * Time.deltaTime;
+        while (_spwanProgress>=1f)
+        {
+            _spwanProgress -= 1f;
+            SpawnEnemy();
+        }
+        
+        _enemies.GameUpdate();
+
+    }
+
+    private void SpawnEnemy()
+    {
+        DefenceGameTile tile = _board.GetSpawnPoint(Random.Range(0, _board.SpawnPointCount));
+
+        DefenceEnemy enemy = _enemyFactory.Get();
+        enemy.SpawnOn(tile);
+        _enemies.Add(enemy);
     }
 
     private void HandleTouch()
@@ -71,7 +100,14 @@ public class DefenceGame : MonoBehaviour
 
         if (tile != null)
         {
-            _board.ToggleDestination(tile);
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                _board.ToggleDestination(tile);
+            }
+            else
+            {
+                _board.ToggleSpawnPoint(tile);
+            }
         }
     }
 }

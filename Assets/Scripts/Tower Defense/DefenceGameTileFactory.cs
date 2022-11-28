@@ -5,15 +5,15 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [CreateAssetMenu]
-public class DefenceGameTileFactory : ScriptableObject
+public class DefenceGameTileFactory : GameObjecFactory
 {
-    private Scene _contentScene;
-
     [SerializeField] private GameTileContent _destinationPrefab = default;
 
     [SerializeField] private GameTileContent _emptyPrefab = default;
 
     [SerializeField] private GameTileContent _wallPrefab;
+
+    [SerializeField] private GameTileContent _SpwanPointPrefab;
 
     public void Reclaim(GameTileContent gameTileContent)
     {
@@ -43,6 +43,11 @@ public class DefenceGameTileFactory : ScriptableObject
                 result = Get(_wallPrefab);
                 break;
             }
+            case DefenceGameTileContentType.SpawnPoint:
+            {
+                result = Get(_SpwanPointPrefab);
+                break;
+            }
         }
 
         return result;
@@ -50,30 +55,8 @@ public class DefenceGameTileFactory : ScriptableObject
 
     GameTileContent Get(GameTileContent prefab)
     {
-        GameTileContent instance = Instantiate(prefab);
+        GameTileContent instance = CreateGameObjectInstance(prefab);
         instance.OriginFactory = this;
-        MoveToFactoryScene(instance.gameObject);
         return instance;
-    }
-
-    private void MoveToFactoryScene(GameObject o)
-    {
-        if (!_contentScene.isLoaded)
-        {
-            if (Application.isEditor)
-            {
-                _contentScene = SceneManager.GetSceneByName(name);
-                if (!_contentScene.isLoaded)
-                {
-                    _contentScene = SceneManager.CreateScene(name);
-                }
-            }
-            else
-            {
-                _contentScene = SceneManager.CreateScene(name);
-            }
-        }
-
-        SceneManager.MoveGameObjectToScene(o, _contentScene);
     }
 }
