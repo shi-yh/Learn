@@ -7,6 +7,8 @@ public class DefenceEnemyFactory : GameObjecFactory
 {
     [SerializeField] private DefenceEnemy _prefab = default;
 
+    // private FloatRange
+    
     public DefenceEnemy Get()
     {
         DefenceEnemy instance = CreateGameObjectInstance(_prefab);

@@ -4,7 +4,6 @@ using Unity.Mathematics;
 using UnityEngine;
 
 
-
 public class DefenceGameTile : MonoBehaviour
 {
     [SerializeField] private Transform _arrow = default;
@@ -45,10 +44,10 @@ public class DefenceGameTile : MonoBehaviour
     public Direction PathDirection { get; private set; }
 
 
-    public DefenceGameTile GrowPathNorth() => GrowPathTo(_north, Direction.North);
-    public DefenceGameTile GrowPathEast() => GrowPathTo(_east, Direction.East);
-    public DefenceGameTile GrowPathSouth() => GrowPathTo(_south, Direction.South);
-    public DefenceGameTile GrowPathWest() => GrowPathTo(_west, Direction.West);
+    public DefenceGameTile GrowPathNorth() => GrowPathTo(_north, Direction.South);
+    public DefenceGameTile GrowPathEast() => GrowPathTo(_east, Direction.West);
+    public DefenceGameTile GrowPathSouth() => GrowPathTo(_south, Direction.North);
+    public DefenceGameTile GrowPathWest() => GrowPathTo(_west, Direction.East);
 
     DefenceGameTile GrowPathTo(DefenceGameTile neighbor, Direction direction)
     {
@@ -62,7 +61,7 @@ public class DefenceGameTile : MonoBehaviour
         neighbor._distance = _distance + 1;
         neighbor._nextOnPath = this;
 
-        neighbor.ExitPoint = (neighbor.transform.localPosition + transform.localPosition) * 0.5f;
+        neighbor.ExitPoint = neighbor.transform.localPosition + direction.GetHalfVector();
 
         neighbor.PathDirection = direction;
 

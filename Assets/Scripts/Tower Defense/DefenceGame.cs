@@ -17,10 +17,10 @@ public class DefenceGame : MonoBehaviour
     [SerializeField, Range(0.1f, 10f)] private float _spawnSpeed = 1;
 
     private DefenceEnemyCollection _enemies = new DefenceEnemyCollection();
-    
+
 
     private float _spwanProgress;
-    
+
     private Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
 
     private void Awake()
@@ -65,14 +65,13 @@ public class DefenceGame : MonoBehaviour
         }
 
         _spwanProgress += _spawnSpeed * Time.deltaTime;
-        while (_spwanProgress>=1f)
+        while (_spwanProgress >= 1f)
         {
-            _spwanProgress -= 1f;
+            _spwanProgress -= 1;
             SpawnEnemy();
         }
-        
-        _enemies.GameUpdate();
 
+        _enemies.GameUpdate();
     }
 
     private void SpawnEnemy()
