@@ -326,26 +326,26 @@ MonoBehaviour:
       min: 0
       max: 0
     scale:
-      min: 0.5
-      max: 2
+      min: 0
+      max: 0
     color:
       hue:
-        min: 0.20610687
-        max: 0.63358796
+        min: 0.32061067
+        max: 0.6259543
       saturation:
-        min: 0.4274809
-        max: 0.8625954
+        min: 0
+        max: 0
       value:
-        min: 0.24427482
-        max: 0.57251906
+        min: 0
+        max: 0
     uniformColor: 0
     oscillationDirection: 3
     oscillationAmplitude:
-      min: 0.1
-      max: 1
+      min: 0
+      max: 0
     oscillationFrequency:
-      min: 1
-      max: 1
+      min: 0
+      max: 0
   _surfaceOnly: 0
 --- !u!4 &693242689
 Transform:

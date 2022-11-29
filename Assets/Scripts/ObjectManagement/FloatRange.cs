@@ -1,10 +1,11 @@
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 [System.Serializable]
 public struct FloatRange
 {
     [SerializeField]
-    public float min, max;
+    private float min, max;
 
     public float Min => min;
 
@@ -25,6 +26,4 @@ public struct FloatRange
         this.min = min;
         this.max = max < min ? min : max;
     }
-    
-    
 }

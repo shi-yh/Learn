@@ -23,6 +23,9 @@ public class DefenceEnemy : MonoBehaviour
 
     private float _directionAngleFrom, _directionAngleTo;
 
+    private float _pathOffse;
+
+    private float _speed;
 
     public DefenceEnemyFactory OriginFactory
     {
@@ -45,8 +48,9 @@ public class DefenceEnemy : MonoBehaviour
         _direction = _tileFrom.PathDirection;
         _directionChange = DirectionChange.None;
         _directionAngleFrom = _directionAngleTo = _direction.GetAngle();
+        _model.localPosition = new Vector3(_pathOffse, 0f);
         transform.localRotation = _direction.GetRotation();
-        _progressFactor = 2f;
+        _progressFactor = 2 * _speed;
     }
 
     private void PrepareOutro()
@@ -54,9 +58,9 @@ public class DefenceEnemy : MonoBehaviour
         _positionTo = _tileFrom.transform.localPosition;
         _directionChange = DirectionChange.None;
         _directionAngleTo = _direction.GetAngle();
-        _model.localPosition = Vector3.zero;
+        _model.localPosition = new Vector3(_pathOffse, 0f);
         transform.localRotation = _direction.GetRotation();
-        _progressFactor = 2;
+        _progressFactor = 2 * _speed;
     }
 
     private void PrepareNextState()
@@ -102,34 +106,34 @@ public class DefenceEnemy : MonoBehaviour
 
         _directionAngleTo = _direction.GetAngle();
 
-        _model.localPosition = Vector3.zero;
+        _model.localPosition = new Vector3(_pathOffse, 0f);
 
-        _progressFactor = 1f;
+        _progressFactor = _speed;
     }
 
     void PrepareTurnRight()
     {
         _directionAngleTo = _directionAngleFrom + 90f;
-        _model.localPosition = new Vector3(-0.5f, 0f);
+        _model.localPosition = new Vector3(_pathOffse - 0.5f, 0f);
         transform.localPosition = _positionFrom + _direction.GetHalfVector();
         ///四分之一圆半径
-        _progressFactor = 1f / (Mathf.PI * 0.25f);
+        _progressFactor = _speed / (Mathf.PI * 0.5f * (0.5f - _pathOffse));
     }
 
     void PrepareTurnLeft()
     {
         _directionAngleTo = _directionAngleFrom - 90f;
-        _model.localPosition = new Vector3(0.5f, 0f);
+        _model.localPosition = new Vector3(_pathOffse + 0.5f, 0f);
         transform.localPosition = _positionFrom + _direction.GetHalfVector();
-        _progressFactor = 1f / (Mathf.PI * 0.25f);
+        _progressFactor = _speed / (Mathf.PI * 0.5f * (0.5f + _pathOffse));
     }
 
     void PrepareTurnAround()
     {
-        _directionAngleTo = _directionAngleFrom + 180;
-        _model.localPosition = Vector3.zero;
+        _directionAngleTo = _directionAngleFrom + (_pathOffse < 0f ? 180f : -180f);
+        _model.localPosition = new Vector3(_pathOffse, 0f);
         transform.localPosition = _positionFrom;
-        _progressFactor = 2f;
+        _progressFactor = _speed / (Mathf.PI * Mathf.Max(Mathf.Abs(_pathOffse), 0.2f));
     }
 
 
@@ -163,5 +167,12 @@ public class DefenceEnemy : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void Initialize(float scale, float pathOffset, float speed)
+    {
+        _model.localScale = new Vector3(scale, scale, scale);
+        this._pathOffse = pathOffset;
+        _speed = speed;
     }
 }

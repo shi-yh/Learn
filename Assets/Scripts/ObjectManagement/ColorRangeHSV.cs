@@ -13,9 +13,9 @@ public class ColorRangeHSV
         get
         {
             return Random.ColorHSV(
-                hue.min, hue.max,
-                saturation.min, saturation.max,
-                value.min, value.max,
+                hue.Min, hue.Max,
+                saturation.Min, saturation.Max,
+                value.Min, value.Max,
                 1f,1f
             );
         }
