@@ -205,6 +205,31 @@ public class DefenceGameBoard : MonoBehaviour
             }
         }
     }
+    
+    public void ToggleTower(DefenceGameTile tile)
+    {
+        if (tile.Content.Type == DefenceGameTileContentType.Tower)
+        {
+            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+
+            FindPaths();
+        }
+        else if (tile.Content.Type == DefenceGameTileContentType.Empty)
+        {
+            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Tower);
+
+            if (!FindPaths())
+            {
+                tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+                FindPaths();
+            }
+        }
+        else if (tile.Content.Type== DefenceGameTileContentType.Wall)
+        {
+            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Tower);
+        }
+    }
+    
 
     public void ToggleSpawnPoint(DefenceGameTile tile)
     {
@@ -226,7 +251,8 @@ public class DefenceGameBoard : MonoBehaviour
 
     public DefenceGameTile GetTile(Ray ray)
     {
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        ///仅开启第0层
+        if (Physics.Raycast(ray, out RaycastHit hit,float.MaxValue,1<<0))
         {
             int x = (int) (hit.point.x + _size.x * 0.5f);
             int y = (int) (hit.point.z + _size.y * 0.5f);

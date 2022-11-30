@@ -8,7 +8,8 @@ public enum DefenceGameTileContentType
     Empty,
     Destination,
     Wall,
-    SpawnPoint
+    SpawnPoint,
+    Tower
 }
 
 public class GameTileContent : MonoBehaviour
@@ -19,12 +20,15 @@ public class GameTileContent : MonoBehaviour
 
     private DefenceGameTileFactory _originFactory;
 
+
+    public bool BlocksPath => _type is DefenceGameTileContentType.Wall or DefenceGameTileContentType.Tower;
+
     public DefenceGameTileFactory OriginFactory
     {
         get => _originFactory;
         set
         {
-            Debug.Assert(_originFactory==null,"Redefined origin Factory");
+            Debug.Assert(_originFactory == null, "Redefined origin Factory");
             _originFactory = value;
         }
     }
@@ -33,5 +37,4 @@ public class GameTileContent : MonoBehaviour
     {
         _originFactory.Reclaim(this);
     }
-
 }

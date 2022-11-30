@@ -65,7 +65,7 @@ public class DefenceGameTile : MonoBehaviour
 
         neighbor.PathDirection = direction;
 
-        return neighbor.Content.Type != DefenceGameTileContentType.Wall ? neighbor : null;
+        return neighbor.Content.BlocksPath ? null : neighbor;
     }
 
 

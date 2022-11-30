@@ -11,9 +11,11 @@ public class DefenceGameTileFactory : GameObjecFactory
 
     [SerializeField] private GameTileContent _emptyPrefab = default;
 
-    [SerializeField] private GameTileContent _wallPrefab;
+    [SerializeField] private GameTileContent _wallPrefab = default;
 
-    [SerializeField] private GameTileContent _SpwanPointPrefab;
+    [SerializeField] private GameTileContent _spawnPointPrefab = default;
+
+    [SerializeField] private Tower _towerPrefab = default;
 
     public void Reclaim(GameTileContent gameTileContent)
     {
@@ -45,9 +47,17 @@ public class DefenceGameTileFactory : GameObjecFactory
             }
             case DefenceGameTileContentType.SpawnPoint:
             {
-                result = Get(_SpwanPointPrefab);
+                result = Get(_spawnPointPrefab);
                 break;
             }
+
+            case DefenceGameTileContentType.Tower:
+            {
+                result = Get(_towerPrefab);
+                break;
+            }
+            default:
+                throw new ArgumentOutOfRangeException(nameof(type), type, null);
         }
 
         return result;

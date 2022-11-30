@@ -89,7 +89,14 @@ public class DefenceGame : MonoBehaviour
 
         if (tile != null)
         {
-            _board.ToggleWall(tile);
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                _board.ToggleTower(tile);
+            }
+            else
+            {
+                _board.ToggleWall(tile);
+            }
         }
     }
 
