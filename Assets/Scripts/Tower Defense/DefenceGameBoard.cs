@@ -10,14 +10,15 @@ public class DefenceGameBoard : MonoBehaviour
 
     [SerializeField] private Texture2D _gridTexture = default;
 
+    private DefenceGameTileFactory _contentFactory;
 
     private Vector2Int _size;
 
     private DefenceGameTile[] _tiles;
 
-    private Queue<DefenceGameTile> _searchFrontier = new Queue<DefenceGameTile>();
+    private List<GameTileContent> _updatingContent = new List<GameTileContent>();
 
-    private DefenceGameTileFactory _contentFactory;
+    private Queue<DefenceGameTile> _searchFrontier = new Queue<DefenceGameTile>();
 
     private bool _showPath, _showGrid;
 
@@ -205,12 +206,14 @@ public class DefenceGameBoard : MonoBehaviour
             }
         }
     }
-    
+
     public void ToggleTower(DefenceGameTile tile)
     {
         if (tile.Content.Type == DefenceGameTileContentType.Tower)
         {
             tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+
+            _updatingContent.Remove(tile.Content);
 
             FindPaths();
         }
@@ -223,13 +226,18 @@ public class DefenceGameBoard : MonoBehaviour
                 tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
                 FindPaths();
             }
+            else
+            {
+                _updatingContent.Add(tile.Content);
+            }
         }
-        else if (tile.Content.Type== DefenceGameTileContentType.Wall)
+        else if (tile.Content.Type == DefenceGameTileContentType.Wall)
         {
             tile.Content = _contentFactory.Get(DefenceGameTileContentType.Tower);
+            _updatingContent.Add(tile.Content);
         }
     }
-    
+
 
     public void ToggleSpawnPoint(DefenceGameTile tile)
     {
@@ -252,7 +260,7 @@ public class DefenceGameBoard : MonoBehaviour
     public DefenceGameTile GetTile(Ray ray)
     {
         ///仅开启第0层
-        if (Physics.Raycast(ray, out RaycastHit hit,float.MaxValue,1<<0))
+        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, 1 << 0))
         {
             int x = (int) (hit.point.x + _size.x * 0.5f);
             int y = (int) (hit.point.z + _size.y * 0.5f);
@@ -264,5 +272,13 @@ public class DefenceGameBoard : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void GameUpdate()
+    {
+        for (int i = 0; i < _updatingContent.Count; i++)
+        {
+            _updatingContent[i].GameUpdate();
+        }
     }
 }

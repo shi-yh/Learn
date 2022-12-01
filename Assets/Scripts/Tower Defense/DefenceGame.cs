@@ -72,6 +72,9 @@ public class DefenceGame : MonoBehaviour
         }
 
         _enemies.GameUpdate();
+        ///因为物体初始会生成在000的位置，然后才会移动到需要的位置，所以需要手动同步物理引擎状态
+        Physics.SyncTransforms();
+        _board.GameUpdate();
     }
 
     private void SpawnEnemy()

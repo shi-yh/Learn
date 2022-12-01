@@ -27,6 +27,9 @@ public class DefenceEnemy : MonoBehaviour
 
     private float _speed;
 
+    private float Health { get; set; }
+    public float Scale { get; private set; }
+
     public DefenceEnemyFactory OriginFactory
     {
         get => _originEnemyFactory;
@@ -139,6 +142,12 @@ public class DefenceEnemy : MonoBehaviour
 
     public bool GameUpdate()
     {
+        if (Health<=0)
+        {
+            _originEnemyFactory.Reclaim(this);
+            return false;
+        }
+        
         _progress += Time.deltaTime * _progressFactor;
         while (_progress >= 1f)
         {
@@ -174,5 +183,13 @@ public class DefenceEnemy : MonoBehaviour
         _model.localScale = new Vector3(scale, scale, scale);
         this._pathOffse = pathOffset;
         _speed = speed;
+        Scale = scale;
+        Health = 100f * scale;
     }
+
+    public void ApplyDamage(float damage)
+    {
+        Health -= damage;
+    }
+    
 }
