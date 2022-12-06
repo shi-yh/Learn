@@ -2,23 +2,26 @@
 
 using UnityEngine;
 
-[System.Serializable]
-public class ColorRangeHSV
+namespace ObjectManagement
 {
-    [FloatRangeSlier(0f,1f)]
-    public FloatRange hue, saturation, value;
-
-    public Color RandomInRange
+    [System.Serializable]
+    public class ColorRangeHSV
     {
-        get
+        [FloatRangeSlier(0f,1f)]
+        public FloatRange hue, saturation, value;
+
+        public Color RandomInRange
         {
-            return Random.ColorHSV(
-                hue.Min, hue.Max,
-                saturation.Min, saturation.Max,
-                value.Min, value.Max,
-                1f,1f
-            );
+            get
+            {
+                return Random.ColorHSV(
+                    hue.Min, hue.Max,
+                    saturation.Min, saturation.Max,
+                    value.Min, value.Max,
+                    1f,1f
+                );
+            }
         }
-    }
     
+    }
 }

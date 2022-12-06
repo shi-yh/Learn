@@ -1,56 +1,57 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CompositeSpawnZone : SpawnZone
+namespace ObjectManagement
 {
-    [SerializeField] private SpawnZone[] _spawnZones;
-
-    [SerializeField] private bool _sequential;
-
-    [SerializeField] private bool _overrideConfig;
-
-    private int _nextSequentialIndex;
-
-    public override Vector3 SpawnPoint
+    public class CompositeSpawnZone : SpawnZone
     {
-        get { return Vector3.zero; }
-    }
+        [SerializeField] private SpawnZone[] _spawnZones;
 
-    public override void Save(GameDataWriter writer)
-    {
-        writer.Write(_nextSequentialIndex);
-    }
+        [SerializeField] private bool _sequential;
 
-    public override void Load(GameDataReader reader)
-    {
-        _nextSequentialIndex = reader.ReadInt();
-    }
+        [SerializeField] private bool _overrideConfig;
 
-    public override Shape SpawnShape()
-    {
-        if (!_overrideConfig)
+        private int _nextSequentialIndex;
+
+        public override Vector3 SpawnPoint
         {
-            return base.SpawnShape();
+            get { return Vector3.zero; }
         }
-        else
-        {
-            int index;
 
-            if (_sequential)
+        public override void Save(GameDataWriter writer)
+        {
+            writer.Write(_nextSequentialIndex);
+        }
+
+        public override void Load(GameDataReader reader)
+        {
+            _nextSequentialIndex = reader.ReadInt();
+        }
+
+        public override Shape SpawnShape()
+        {
+            if (!_overrideConfig)
             {
-                index = _nextSequentialIndex++;
-                if (_nextSequentialIndex >= _spawnZones.Length)
-                {
-                    _nextSequentialIndex = 0;
-                }
+                return base.SpawnShape();
             }
             else
             {
-                index = Random.Range(0, _spawnZones.Length);
-            }
+                int index;
 
-            return _spawnZones[index].SpawnShape();
+                if (_sequential)
+                {
+                    index = _nextSequentialIndex++;
+                    if (_nextSequentialIndex >= _spawnZones.Length)
+                    {
+                        _nextSequentialIndex = 0;
+                    }
+                }
+                else
+                {
+                    index = Random.Range(0, _spawnZones.Length);
+                }
+
+                return _spawnZones[index].SpawnShape();
+            }
         }
     }
 }

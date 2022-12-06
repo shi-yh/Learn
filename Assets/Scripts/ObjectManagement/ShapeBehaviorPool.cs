@@ -1,25 +1,26 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.MemoryProfiler;
 
-public static class ShapeBehaviorPool<T> where T : ShapeBehavior, new()
+namespace ObjectManagement
 {
-    private static Stack<T> _stack = new Stack<T>();
-
-    public static T Get()
+    public static class ShapeBehaviorPool<T> where T : ShapeBehavior, new()
     {
-        if (_stack.Count>0)
+        private static Stack<T> _stack = new Stack<T>();
+
+        public static T Get()
         {
-            return _stack.Pop();
+            if (_stack.Count>0)
+            {
+                return _stack.Pop();
+            }
+
+            return new T();
         }
 
-        return new T();
-    }
-
-    public static void Reclaim(T behavior)
-    {
-        _stack.Push(behavior);
-    }
+        public static void Reclaim(T behavior)
+        {
+            _stack.Push(behavior);
+        }
     
     
+    }
 }

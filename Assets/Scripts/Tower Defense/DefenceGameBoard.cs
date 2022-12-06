@@ -1,284 +1,293 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DefenceGameBoard : MonoBehaviour
+namespace Tower_Defense
 {
-    [SerializeField] private Transform _ground = default;
-
-    [SerializeField] private DefenceGameTile _tilePrefab = default;
-
-    [SerializeField] private Texture2D _gridTexture = default;
-
-    private DefenceGameTileFactory _contentFactory;
-
-    private Vector2Int _size;
-
-    private DefenceGameTile[] _tiles;
-
-    private List<GameTileContent> _updatingContent = new List<GameTileContent>();
-
-    private Queue<DefenceGameTile> _searchFrontier = new Queue<DefenceGameTile>();
-
-    private bool _showPath, _showGrid;
-
-    private List<DefenceGameTile> _spawnPoints = new List<DefenceGameTile>();
-
-    public int SpawnPointCount => _spawnPoints.Count;
-
-    public bool ShowPath
+    public class DefenceGameBoard : MonoBehaviour
     {
-        get => _showPath;
-        set
+        [SerializeField] private Transform _ground = default;
+
+        [SerializeField] private DefenceGameTile _tilePrefab = default;
+
+        [SerializeField] private Texture2D _gridTexture = default;
+
+        private DefenceGameTileFactory _contentFactory;
+
+        private Vector2Int _size;
+
+        private DefenceGameTile[] _tiles;
+
+        private List<GameTileContent> _updatingContent = new List<GameTileContent>();
+
+        private Queue<DefenceGameTile> _searchFrontier = new Queue<DefenceGameTile>();
+
+        private bool _showPath, _showGrid;
+
+        private List<DefenceGameTile> _spawnPoints = new List<DefenceGameTile>();
+
+        public int SpawnPointCount => _spawnPoints.Count;
+
+        public bool ShowPath
         {
-            _showPath = value;
-            if (_showPath)
+            get => _showPath;
+            set
             {
-                foreach (DefenceGameTile tile in _tiles)
+                _showPath = value;
+                if (_showPath)
                 {
-                    tile.ShowPath();
+                    foreach (DefenceGameTile tile in _tiles)
+                    {
+                        tile.ShowPath();
+                    }
+                }
+                else
+                {
+                    foreach (DefenceGameTile tile in _tiles)
+                    {
+                        tile.HidePath();
+                    }
                 }
             }
-            else
+        }
+
+        public bool ShowGrid
+        {
+            get => _showGrid;
+            set
             {
-                foreach (DefenceGameTile tile in _tiles)
+                _showGrid = value;
+
+                Material m = _ground.GetComponent<MeshRenderer>().material;
+
+                if (_showGrid)
                 {
-                    tile.HidePath();
+                    m.mainTexture = _gridTexture;
+                    m.SetTextureScale("_MainTex", _size);
+                }
+                else
+                {
+                    m.mainTexture = null;
                 }
             }
         }
-    }
 
-    public bool ShowGrid
-    {
-        get => _showGrid;
-        set
+
+        public void Initialize(Vector2Int size, DefenceGameTileFactory contentFactory)
         {
-            _showGrid = value;
+            this._size = size;
 
-            Material m = _ground.GetComponent<MeshRenderer>().material;
+            this._contentFactory = contentFactory;
 
-            if (_showGrid)
+            _ground.localScale = new Vector3(size.x, size.y, 1f);
+
+            _tiles = new DefenceGameTile[_size.x * _size.y];
+
+            Vector2 offset = new Vector2((size.x - 1) * 0.5f, (size.y - 1) * 0.5f);
+            int index = 0;
+            for (int y = 0; y < size.y; y++)
             {
-                m.mainTexture = _gridTexture;
-                m.SetTextureScale("_MainTex", _size);
-            }
-            else
-            {
-                m.mainTexture = null;
-            }
-        }
-    }
-
-
-    public void Initialize(Vector2Int size, DefenceGameTileFactory contentFactory)
-    {
-        this._size = size;
-
-        this._contentFactory = contentFactory;
-
-        _ground.localScale = new Vector3(size.x, size.y, 1f);
-
-        _tiles = new DefenceGameTile[_size.x * _size.y];
-
-        Vector2 offset = new Vector2((size.x - 1) * 0.5f, (size.y - 1) * 0.5f);
-        int index = 0;
-        for (int y = 0; y < size.y; y++)
-        {
-            for (int x = 0; x < size.x; x++, index++)
-            {
-                DefenceGameTile tile = _tiles[index] = Instantiate(_tilePrefab);
-                Transform transform1;
-                (transform1 = tile.transform).SetParent(transform, false);
-                transform1.localPosition = new Vector3(x - offset.x, 0, y - offset.y);
-
-                if (x > 0)
+                for (int x = 0; x < size.x; x++, index++)
                 {
-                    DefenceGameTile.MakeEastWestNeighbors(tile, _tiles[index - 1]);
-                }
+                    DefenceGameTile tile = _tiles[index] = Instantiate(_tilePrefab);
+                    Transform transform1;
+                    (transform1 = tile.transform).SetParent(transform, false);
+                    transform1.localPosition = new Vector3(x - offset.x, 0, y - offset.y);
 
-                if (y > 0)
+                    if (x > 0)
+                    {
+                        DefenceGameTile.MakeEastWestNeighbors(tile, _tiles[index - 1]);
+                    }
+
+                    if (y > 0)
+                    {
+                        DefenceGameTile.MakeNorthSouthNeigbors(tile, _tiles[index - size.x]);
+                    }
+
+                    tile.Content = contentFactory.Get(DefenceGameTileContentType.Empty);
+                }
+            }
+
+            ToggleDestination(_tiles[0]);
+            ToggleSpawnPoint(_tiles[^1]);
+        }
+
+
+        public DefenceGameTile GetSpawnPoint(int index)
+        {
+            return _spawnPoints[index];
+        }
+
+        private bool FindPaths()
+        {
+            foreach (DefenceGameTile defenceGameTile in _tiles)
+            {
+                if (defenceGameTile.Content.Type == DefenceGameTileContentType.Destination)
                 {
-                    DefenceGameTile.MakeNorthSouthNeigbors(tile, _tiles[index - size.x]);
+                    defenceGameTile.BecomeDestination();
+                    _searchFrontier.Enqueue(defenceGameTile);
                 }
-
-                tile.Content = contentFactory.Get(DefenceGameTileContentType.Empty);
+                else
+                {
+                    defenceGameTile.ClearPath();
+                }
             }
-        }
 
-        ToggleDestination(_tiles[0]);
-        ToggleSpawnPoint(_tiles[^1]);
-    }
-
-
-    public DefenceGameTile GetSpawnPoint(int index)
-    {
-        return _spawnPoints[index];
-    }
-
-    private bool FindPaths()
-    {
-        foreach (DefenceGameTile defenceGameTile in _tiles)
-        {
-            if (defenceGameTile.Content.Type == DefenceGameTileContentType.Destination)
-            {
-                defenceGameTile.BecomeDestination();
-                _searchFrontier.Enqueue(defenceGameTile);
-            }
-            else
-            {
-                defenceGameTile.ClearPath();
-            }
-        }
-
-        if (_searchFrontier.Count == 0)
-        {
-            return false;
-        }
-
-        while (_searchFrontier.Count > 0)
-        {
-            DefenceGameTile tile = _searchFrontier.Dequeue();
-            if (tile != null)
-            {
-                _searchFrontier.Enqueue(tile.GrowPathNorth());
-                _searchFrontier.Enqueue(tile.GrowPathSouth());
-                _searchFrontier.Enqueue(tile.GrowPathEast());
-                _searchFrontier.Enqueue(tile.GrowPathWest());
-            }
-        }
-
-        ///防止因为添加墙壁导致的闭合死路
-        foreach (DefenceGameTile tile in _tiles)
-        {
-            if (!tile.HasPath)
+            if (_searchFrontier.Count == 0)
             {
                 return false;
             }
-        }
 
-        if (_showPath)
-        {
-            foreach (var VARIABLE in _tiles)
+            while (_searchFrontier.Count > 0)
             {
-                VARIABLE.ShowPath();
+                DefenceGameTile tile = _searchFrontier.Dequeue();
+                if (tile != null)
+                {
+                    _searchFrontier.Enqueue(tile.GrowPathNorth());
+                    _searchFrontier.Enqueue(tile.GrowPathSouth());
+                    _searchFrontier.Enqueue(tile.GrowPathEast());
+                    _searchFrontier.Enqueue(tile.GrowPathWest());
+                }
             }
+
+            ///防止因为添加墙壁导致的闭合死路
+            foreach (DefenceGameTile tile in _tiles)
+            {
+                if (!tile.HasPath)
+                {
+                    return false;
+                }
+            }
+
+            if (_showPath)
+            {
+                foreach (var VARIABLE in _tiles)
+                {
+                    VARIABLE.ShowPath();
+                }
+            }
+
+            return true;
         }
 
-        return true;
-    }
-
-    public void ToggleDestination(DefenceGameTile tile)
-    {
-        if (tile.Content.Type == DefenceGameTileContentType.Destination)
+        public void ToggleDestination(DefenceGameTile tile)
         {
-            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+            if (tile.Content.Type == DefenceGameTileContentType.Destination)
+            {
+                tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
 
-            if (!FindPaths())
+                if (!FindPaths())
+                {
+                    tile.Content = _contentFactory.Get(DefenceGameTileContentType.Destination);
+                    FindPaths();
+                }
+            }
+            else
             {
                 tile.Content = _contentFactory.Get(DefenceGameTileContentType.Destination);
                 FindPaths();
             }
         }
-        else
-        {
-            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Destination);
-            FindPaths();
-        }
-    }
 
-    public void ToggleWall(DefenceGameTile tile)
-    {
-        if (tile.Content.Type == DefenceGameTileContentType.Wall)
+        public void ToggleWall(DefenceGameTile tile)
         {
-            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
-
-            FindPaths();
-        }
-        else if (tile.Content.Type == DefenceGameTileContentType.Empty)
-        {
-            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Wall);
-
-            if (!FindPaths())
+            if (tile.Content.Type == DefenceGameTileContentType.Wall)
             {
                 tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+
                 FindPaths();
             }
-        }
-    }
-
-    public void ToggleTower(DefenceGameTile tile)
-    {
-        if (tile.Content.Type == DefenceGameTileContentType.Tower)
-        {
-            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
-
-            _updatingContent.Remove(tile.Content);
-
-            FindPaths();
-        }
-        else if (tile.Content.Type == DefenceGameTileContentType.Empty)
-        {
-            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Tower);
-
-            if (!FindPaths())
+            else if (tile.Content.Type == DefenceGameTileContentType.Empty)
             {
-                tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
-                FindPaths();
+                tile.Content = _contentFactory.Get(DefenceGameTileContentType.Wall);
+
+                if (!FindPaths())
+                {
+                    tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+                    FindPaths();
+                }
             }
-            else
+        }
+
+        public void ToggleTower(DefenceGameTile tile, TowerType towerType)
+        {
+            if (tile.Content.Type == DefenceGameTileContentType.Tower)
             {
+                _updatingContent.Remove(tile.Content);
+
+                if (towerType == ((Tower)tile.Content).TowerType)
+                {
+                    tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+                    FindPaths();
+                }
+                else
+                {
+                    tile.Content = _contentFactory.Get(towerType);
+                    _updatingContent.Add(tile.Content);
+                }
+            }
+            else if (tile.Content.Type == DefenceGameTileContentType.Empty)
+            {
+                tile.Content = _contentFactory.Get(towerType);
+
+                if (!FindPaths())
+                {
+                    tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+                    FindPaths();
+                }
+                else
+                {
+                    _updatingContent.Add(tile.Content);
+                }
+            }
+            else if (tile.Content.Type == DefenceGameTileContentType.Wall)
+            {
+                tile.Content = _contentFactory.Get(towerType);
                 _updatingContent.Add(tile.Content);
             }
         }
-        else if (tile.Content.Type == DefenceGameTileContentType.Wall)
-        {
-            tile.Content = _contentFactory.Get(DefenceGameTileContentType.Tower);
-            _updatingContent.Add(tile.Content);
-        }
-    }
 
 
-    public void ToggleSpawnPoint(DefenceGameTile tile)
-    {
-        if (tile.Content.Type == DefenceGameTileContentType.SpawnPoint)
+        public void ToggleSpawnPoint(DefenceGameTile tile)
         {
-            if (_spawnPoints.Count > 1)
+            if (tile.Content.Type == DefenceGameTileContentType.SpawnPoint)
             {
-                _spawnPoints.Remove(tile);
-                tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+                if (_spawnPoints.Count > 1)
+                {
+                    _spawnPoints.Remove(tile);
+                    tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+                }
             }
-        }
-        else if (tile.Content.Type == DefenceGameTileContentType.Empty)
-        {
-            tile.Content = _contentFactory.Get(DefenceGameTileContentType.SpawnPoint);
-            _spawnPoints.Add(tile);
-        }
-    }
-
-
-    public DefenceGameTile GetTile(Ray ray)
-    {
-        ///仅开启第0层
-        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, 1 << 0))
-        {
-            int x = (int) (hit.point.x + _size.x * 0.5f);
-            int y = (int) (hit.point.z + _size.y * 0.5f);
-
-            if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
+            else if (tile.Content.Type == DefenceGameTileContentType.Empty)
             {
-                return _tiles[x + y * _size.x];
+                tile.Content = _contentFactory.Get(DefenceGameTileContentType.SpawnPoint);
+                _spawnPoints.Add(tile);
             }
         }
 
-        return null;
-    }
 
-    public void GameUpdate()
-    {
-        for (int i = 0; i < _updatingContent.Count; i++)
+        public DefenceGameTile GetTile(Ray ray)
         {
-            _updatingContent[i].GameUpdate();
+            ///仅开启第0层
+            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, 1 << 0))
+            {
+                int x = (int)(hit.point.x + _size.x * 0.5f);
+                int y = (int)(hit.point.z + _size.y * 0.5f);
+
+                if (x >= 0 && x < _size.x && y >= 0 && y < _size.y)
+                {
+                    return _tiles[x + y * _size.x];
+                }
+            }
+
+            return null;
+        }
+
+        public void GameUpdate()
+        {
+            for (int i = 0; i < _updatingContent.Count; i++)
+            {
+                _updatingContent[i].GameUpdate();
+            }
         }
     }
 }

@@ -1,222 +1,224 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
-public class Game : PersistableObject
+namespace ObjectManagement
 {
-    [SerializeField] private ShapeFactory[] _shapeFactories;
-
-    public KeyCode createKey = KeyCode.C;
-
-    public KeyCode newGameKey = KeyCode.N;
-
-    public KeyCode saveKey = KeyCode.S;
-
-    public KeyCode loadKey = KeyCode.L;
-
-    public KeyCode destroyKey = KeyCode.X;
-
-    public int levelCount;
-
-    [SerializeField] private bool _reseedOnLoad;
-
-    private List<Shape> _shapes;
-
-    public PersisentStorage storage;
-
-    private const int SAVE_VERSION = 5;
-
-    private int _loadSceneIdx;
-
-    private Random.State _mainRandomState;
-
-
-    private void Awake()
+    public class Game : PersistableObject
     {
-        _shapes = new List<Shape>();
+        [SerializeField] private ShapeFactory[] _shapeFactories;
 
-        StartCoroutine(LoadLevel(1));
-    }
+        public KeyCode createKey = KeyCode.C;
 
-    private void Start()
-    {
-        BeginNewGame();
-        _mainRandomState = Random.state;
-    }
+        public KeyCode newGameKey = KeyCode.N;
 
-    private void OnEnable()
-    {
-        if (_shapeFactories[0].FactoryId != 0)
+        public KeyCode saveKey = KeyCode.S;
+
+        public KeyCode loadKey = KeyCode.L;
+
+        public KeyCode destroyKey = KeyCode.X;
+
+        public int levelCount;
+
+        [SerializeField] private bool _reseedOnLoad;
+
+        private List<Shape> _shapes;
+
+        public PersisentStorage storage;
+
+        private const int SAVE_VERSION = 5;
+
+        private int _loadSceneIdx;
+
+        private Random.State _mainRandomState;
+
+
+        private void Awake()
         {
-            for (int i = 0; i < _shapeFactories.Length; i++)
-            {
-                _shapeFactories[i].FactoryId = i;
-            }
-        }
-    }
+            _shapes = new List<Shape>();
 
-
-    IEnumerator LoadLevel(int levelIdx)
-    {
-        enabled = false;
-
-        if (_loadSceneIdx > 0)
-        {
-            yield return SceneManager.UnloadSceneAsync(_loadSceneIdx);
+            StartCoroutine(LoadLevel(1));
         }
 
-        yield return SceneManager.LoadSceneAsync(levelIdx, LoadSceneMode.Additive);
-        SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(levelIdx));
-
-        _loadSceneIdx = levelIdx;
-
-        enabled = true;
-    }
-
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(createKey))
-        {
-            CreateShape();
-        }
-        else if (Input.GetKeyDown(newGameKey))
+        private void Start()
         {
             BeginNewGame();
-            StartCoroutine(LoadLevel(SceneManager.GetActiveScene().buildIndex));
+            _mainRandomState = Random.state;
         }
-        else if (Input.GetKeyDown(saveKey))
+
+        private void OnEnable()
         {
-            storage.Save(this, SAVE_VERSION);
-        }
-        else if (Input.GetKeyDown(loadKey))
-        {
-            BeginNewGame();
-            storage.Load(this);
-        }
-        else if (Input.GetKeyDown(destroyKey))
-        {
-            DestroyShape();
-        }
-        else
-        {
-            for (int i = 0; i <= levelCount; i++)
+            if (_shapeFactories[0].FactoryId != 0)
             {
-                if (Input.GetKeyDown(KeyCode.Alpha0 + i))
+                for (int i = 0; i < _shapeFactories.Length; i++)
                 {
-                    BeginNewGame();
-                    StartCoroutine(LoadLevel(i));
-                    return;
+                    _shapeFactories[i].FactoryId = i;
                 }
             }
         }
-    }
 
-    private void BeginNewGame()
-    {
-        Random.state = _mainRandomState;
-        int seed = Random.Range(0, int.MaxValue) ^ (int) Time.unscaledTime;
-        _mainRandomState = Random.state;
-        Random.InitState(seed);
 
-        for (int i = 0; i < _shapes.Count; i++)
+        IEnumerator LoadLevel(int levelIdx)
         {
-            _shapes[i].Recycle();
-        }
+            enabled = false;
 
-        _shapes.Clear();
-    }
-
-    private void DestroyShape()
-    {
-        if (_shapes.Count > 0)
-        {
-            int index = Random.Range(0, _shapes.Count);
-            _shapes[index].Recycle();
-
-            ///List继承自Array，删除一个元素需要将后面的所有元素向前移动，因此直接将需要删除的元素放到末尾
-            int lastIndex = _shapes.Count - 1;
-            _shapes[index] = _shapes[lastIndex];
-            _shapes.RemoveAt(lastIndex);
-        }
-    }
-
-
-    public override void Save(GameDataWriter writer)
-    {
-        writer.Write(_shapes.Count);
-        writer.Write(Random.state);
-        writer.Write(SceneManager.GetActiveScene().buildIndex);
-        GameLevel.current.Save(writer);
-        for (int i = 0; i < _shapes.Count; i++)
-        {
-            writer.Write(_shapes[i].OriginFactory.FactoryId);
-            writer.Write(_shapes[i].ShapeId);
-            writer.Write(_shapes[i].MaterialId);
-            _shapes[i].Save(writer);
-        }
-    }
-
-    public override void Load(GameDataReader reader)
-    {
-        int version = reader.Version;
-
-        if (version > SAVE_VERSION)
-        {
-            Debug.LogError("Unsupported future save version" + version);
-            return;
-        }
-
-        StartCoroutine(LoadGame(reader));
-    }
-
-    private IEnumerator LoadGame(GameDataReader reader)
-    {
-        int version = reader.Version;
-
-        int count = version <= 0 ? -version : reader.ReadInt();
-
-        if (version >= 2)
-        {
-            Random.State state = reader.ReadRandomState();
-
-            if (!_reseedOnLoad)
+            if (_loadSceneIdx > 0)
             {
-                Random.state = state;
+                yield return SceneManager.UnloadSceneAsync(_loadSceneIdx);
+            }
+
+            yield return SceneManager.LoadSceneAsync(levelIdx, LoadSceneMode.Additive);
+            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(levelIdx));
+
+            _loadSceneIdx = levelIdx;
+
+            enabled = true;
+        }
+
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(createKey))
+            {
+                CreateShape();
+            }
+            else if (Input.GetKeyDown(newGameKey))
+            {
+                BeginNewGame();
+                StartCoroutine(LoadLevel(SceneManager.GetActiveScene().buildIndex));
+            }
+            else if (Input.GetKeyDown(saveKey))
+            {
+                storage.Save(this, SAVE_VERSION);
+            }
+            else if (Input.GetKeyDown(loadKey))
+            {
+                BeginNewGame();
+                storage.Load(this);
+            }
+            else if (Input.GetKeyDown(destroyKey))
+            {
+                DestroyShape();
+            }
+            else
+            {
+                for (int i = 0; i <= levelCount; i++)
+                {
+                    if (Input.GetKeyDown(KeyCode.Alpha0 + i))
+                    {
+                        BeginNewGame();
+                        StartCoroutine(LoadLevel(i));
+                        return;
+                    }
+                }
             }
         }
 
-        yield return LoadLevel(version < 2 ? 1 : reader.ReadInt());
-
-        GameLevel.current.Load(reader);
-
-
-        for (int i = 0; i < count; i++)
+        private void BeginNewGame()
         {
-            int factoryId = version >= 5 ? reader.ReadInt() : 0;
-            int shapeId = version > 0 ? reader.ReadInt() : 0;
-            int materialId = version > 0 ? reader.ReadInt() : 0;
+            Random.state = _mainRandomState;
+            int seed = Random.Range(0, int.MaxValue) ^ (int) Time.unscaledTime;
+            _mainRandomState = Random.state;
+            Random.InitState(seed);
 
-            Shape o = _shapeFactories[factoryId].Get(shapeId, materialId);
-            o.Load(reader);
-            _shapes.Add(o);
+            for (int i = 0; i < _shapes.Count; i++)
+            {
+                _shapes[i].Recycle();
+            }
+
+            _shapes.Clear();
         }
-    }
 
-
-    void CreateShape()
-    {
-        _shapes.Add(GameLevel.current.SpawnShape());
-    }
-
-    private void FixedUpdate()
-    {
-        for (int i = 0; i < _shapes.Count; i++)
+        private void DestroyShape()
         {
-            _shapes[i].GameUpdate();
+            if (_shapes.Count > 0)
+            {
+                int index = Random.Range(0, _shapes.Count);
+                _shapes[index].Recycle();
+
+                ///List继承自Array，删除一个元素需要将后面的所有元素向前移动，因此直接将需要删除的元素放到末尾
+                int lastIndex = _shapes.Count - 1;
+                _shapes[index] = _shapes[lastIndex];
+                _shapes.RemoveAt(lastIndex);
+            }
+        }
+
+
+        public override void Save(GameDataWriter writer)
+        {
+            writer.Write(_shapes.Count);
+            writer.Write(Random.state);
+            writer.Write(SceneManager.GetActiveScene().buildIndex);
+            GameLevel.current.Save(writer);
+            for (int i = 0; i < _shapes.Count; i++)
+            {
+                writer.Write(_shapes[i].OriginFactory.FactoryId);
+                writer.Write(_shapes[i].ShapeId);
+                writer.Write(_shapes[i].MaterialId);
+                _shapes[i].Save(writer);
+            }
+        }
+
+        public override void Load(GameDataReader reader)
+        {
+            int version = reader.Version;
+
+            if (version > SAVE_VERSION)
+            {
+                Debug.LogError("Unsupported future save version" + version);
+                return;
+            }
+
+            StartCoroutine(LoadGame(reader));
+        }
+
+        private IEnumerator LoadGame(GameDataReader reader)
+        {
+            int version = reader.Version;
+
+            int count = version <= 0 ? -version : reader.ReadInt();
+
+            if (version >= 2)
+            {
+                Random.State state = reader.ReadRandomState();
+
+                if (!_reseedOnLoad)
+                {
+                    Random.state = state;
+                }
+            }
+
+            yield return LoadLevel(version < 2 ? 1 : reader.ReadInt());
+
+            GameLevel.current.Load(reader);
+
+
+            for (int i = 0; i < count; i++)
+            {
+                int factoryId = version >= 5 ? reader.ReadInt() : 0;
+                int shapeId = version > 0 ? reader.ReadInt() : 0;
+                int materialId = version > 0 ? reader.ReadInt() : 0;
+
+                Shape o = _shapeFactories[factoryId].Get(shapeId, materialId);
+                o.Load(reader);
+                _shapes.Add(o);
+            }
+        }
+
+
+        void CreateShape()
+        {
+            _shapes.Add(GameLevel.current.SpawnShape());
+        }
+
+        private void FixedUpdate()
+        {
+            for (int i = 0; i < _shapes.Count; i++)
+            {
+                _shapes[i].GameUpdate();
+            }
         }
     }
 }

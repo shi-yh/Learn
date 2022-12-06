@@ -1,115 +1,65 @@
-using System;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-public class Tower : GameTileContent
+namespace Tower_Defense
 {
-    [SerializeField, Range(1.5f, 10.5f)] private float _targetingRange = 1.5f;
-
-    [SerializeField] private Transform _turret = default, _laserBeam = default;
-
-    [SerializeField] private float _damagePerSecond = 10f;
-
-    private Vector3 _laserBeamScale;
-
-
-    private TargetPoint _target;
-
-    private const int enemyLayerMask = 1 << 9;
-
-    private Collider[] _tempTargets = new Collider[100];
-
-    private void Awake()
+    public enum TowerType
     {
-        _laserBeamScale = _laserBeam.localScale;
+        Laser,
+        Mortar
     }
 
-    public override void GameUpdate()
+    public abstract class Tower : GameTileContent
     {
-        if (TrackTarget() || AcquireTarget())
+        [SerializeField, Range(1.5f, 10.5f)] protected float _targetingRange = 1.5f;
+
+        public abstract TowerType TowerType { get; }
+
+        protected bool TrackTarget(ref TargetPoint target)
         {
-            Shoot();
-        }
-        else
-        {
-            _laserBeam.localScale = Vector3.zero;
-        }
-    }
+            if (target == null)
+            {
+                return false;
+            }
 
-    private void Shoot()
-    {
-        Vector3 point = _target.Position;
-        _turret.LookAt(point);
-        _laserBeam.localRotation = _turret.localRotation;
+            Vector3 a = transform.localPosition;
+            Vector3 b = target.Position;
 
-        float d = Vector3.Distance(_turret.position, point);
-        _laserBeamScale.z = d;
-        _laserBeam.localScale = _laserBeamScale;
-        _laserBeam.localPosition = _turret.localPosition + 0.5f * d * _laserBeam.forward;
+            float x = a.x - b.x;
+            float z = a.z - b.z;
 
-        _target.Enemy.ApplyDamage(_damagePerSecond * Time.deltaTime);
-    }
+            float r = _targetingRange + 0.125f * target.Enemy.Scale;
 
-    private bool TrackTarget()
-    {
-        if (_target == null)
-        {
-            return false;
+            ///勾股定理
+            if (x * x + z * z > r * r)
+            {
+                target = null;
+                return false;
+            }
+
+            return true;
         }
 
-        Vector3 a = transform.localPosition;
-        Vector3 b = _target.Position;
-
-        float x = a.x - b.x;
-        float z = a.z - b.z;
-
-        float r = _targetingRange + 0.125f * _target.Enemy.Scale;
-
-        ///勾股定理
-        if (x * x + z * z > r * r)
+        protected bool AcquireTarget(out TargetPoint target)
         {
-            _target = null;
-            return false;
-        }
+            if (TargetPoint.FillBuffers(transform.localPosition, _targetingRange))
+            {
+                target = TargetPoint.RandomBuffered();
+            }
+            else
+            {
+                target = null;
+            }
 
-        return true;
-    }
-
-    private bool AcquireTarget()
-    {
-        Vector3 a = transform.localPosition;
-        Vector3 b = a;
-
-        ///高度为3的圆柱体，
-        b.y += 3f;
-
-        var size = Physics.OverlapCapsuleNonAlloc(a, b, _targetingRange, _tempTargets, enemyLayerMask);
-
-        if (size > 0)
-        {
-            _target = _tempTargets[Random.Range(0, size)].GetComponent<TargetPoint>();
-        }
-        else
-        {
-            _target = null;
+            return target != null;
         }
 
 
-        return _target != null;
-    }
-
-
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.yellow;
-        Vector3 position = transform.localPosition;
-        position.y += 0.01f;
-        Gizmos.DrawWireSphere(position, _targetingRange);
-
-        if (_target != null)
+        private void OnDrawGizmosSelected()
         {
-            Gizmos.DrawLine(position, _target.Position);
+            Gizmos.color = Color.yellow;
+            Vector3 position = transform.localPosition;
+            position.y += 0.01f;
+            Gizmos.DrawWireSphere(position, _targetingRange);
         }
     }
 }

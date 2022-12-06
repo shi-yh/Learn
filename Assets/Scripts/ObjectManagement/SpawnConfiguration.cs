@@ -1,33 +1,34 @@
-using UnityEngine;
-
-[System.Serializable]
-public class SpawnConfiguration
+namespace ObjectManagement
 {
-    public enum SpawnMovementDirection
+    [System.Serializable]
+    public class SpawnConfiguration
     {
-        Forward,
-        Upward,
-        Outward,
-        Random
+        public enum SpawnMovementDirection
+        {
+            Forward,
+            Upward,
+            Outward,
+            Random
+        }
+
+        public ShapeFactory[] factoryps;
+
+        public SpawnMovementDirection spawnMovementDirection;
+
+        public FloatRange spawnSpeed;
+
+        public FloatRange angularSpeed;
+
+        public FloatRange scale;
+
+        public ColorRangeHSV color;
+
+        public bool uniformColor;
+
+        public SpawnMovementDirection oscillationDirection;
+
+        public FloatRange oscillationAmplitude;
+
+        public FloatRange oscillationFrequency;
     }
-
-    public ShapeFactory[] factoryps;
-
-    public SpawnMovementDirection spawnMovementDirection;
-
-    public FloatRange spawnSpeed;
-
-    public FloatRange angularSpeed;
-
-    public FloatRange scale;
-
-    public ColorRangeHSV color;
-
-    public bool uniformColor;
-
-    public SpawnMovementDirection oscillationDirection;
-
-    public FloatRange oscillationAmplitude;
-
-    public FloatRange oscillationFrequency;
 }

@@ -1,66 +1,69 @@
 using System.IO;
 using UnityEngine;
 
-public class GameDataReader
+namespace ObjectManagement
 {
-    private BinaryReader _reader;
-
-    public int Version { get; }
-
-    public GameDataReader(BinaryReader reder, int version)
+    public class GameDataReader
     {
-        _reader = reder;
-        Version = version;
-    }
+        private BinaryReader _reader;
 
-    public Random.State ReadRandomState()
-    {
-        return JsonUtility.FromJson<Random.State>(_reader.ReadString());
-    }
+        public int Version { get; }
 
-    public float ReadFloat()
-    {
-        return _reader.ReadSingle();
-    }
+        public GameDataReader(BinaryReader reder, int version)
+        {
+            _reader = reder;
+            Version = version;
+        }
 
-    public int ReadInt()
-    {
-        return _reader.ReadInt32();
-    }
+        public Random.State ReadRandomState()
+        {
+            return JsonUtility.FromJson<Random.State>(_reader.ReadString());
+        }
 
-    public Quaternion ReadQuaternion()
-    {
-        Quaternion value;
+        public float ReadFloat()
+        {
+            return _reader.ReadSingle();
+        }
 
-        value.x = _reader.ReadSingle();
-        value.y = _reader.ReadSingle();
-        value.z = _reader.ReadSingle();
-        value.w = _reader.ReadSingle();
+        public int ReadInt()
+        {
+            return _reader.ReadInt32();
+        }
 
-        return value;
-    }
+        public Quaternion ReadQuaternion()
+        {
+            Quaternion value;
 
-    public Vector3 ReadVector3()
-    {
-        Vector3 value;
+            value.x = _reader.ReadSingle();
+            value.y = _reader.ReadSingle();
+            value.z = _reader.ReadSingle();
+            value.w = _reader.ReadSingle();
 
-        value.x = _reader.ReadSingle();
-        value.y = _reader.ReadSingle();
-        value.z = _reader.ReadSingle();
+            return value;
+        }
 
-        return value;
-    }
+        public Vector3 ReadVector3()
+        {
+            Vector3 value;
 
-    public Color ReadColor()
-    {
-        Color c;
+            value.x = _reader.ReadSingle();
+            value.y = _reader.ReadSingle();
+            value.z = _reader.ReadSingle();
 
-        c.r = _reader.ReadSingle();
-        c.g = _reader.ReadSingle();
-        c.b = _reader.ReadSingle();
-        c.a = _reader.ReadSingle();
+            return value;
+        }
+
+        public Color ReadColor()
+        {
+            Color c;
+
+            c.r = _reader.ReadSingle();
+            c.g = _reader.ReadSingle();
+            c.b = _reader.ReadSingle();
+            c.a = _reader.ReadSingle();
 
 
-        return c;
+            return c;
+        }
     }
 }

@@ -1,28 +1,31 @@
 using UnityEngine;
 
-public sealed class MovementShapeBehavior : ShapeBehavior
+namespace ObjectManagement
 {
-    public Vector3 velocity { get; set; }
-
-    public override void GameUpdate(Shape shape)
+    public sealed class MovementShapeBehavior : ShapeBehavior
     {
-        shape.transform.localPosition += velocity * Time.deltaTime;
-    }
+        public Vector3 velocity { get; set; }
 
-    public override void Save(GameDataWriter writer)
-    {
-        writer.Write(velocity);
-    }
+        public override void GameUpdate(Shape shape)
+        {
+            shape.transform.localPosition += velocity * Time.deltaTime;
+        }
 
-    public override void Load(GameDataReader reader)
-    {
-        velocity = reader.ReadVector3();
-    }
+        public override void Save(GameDataWriter writer)
+        {
+            writer.Write(velocity);
+        }
 
-    public override void Recycle()
-    {
-        ShapeBehaviorPool<MovementShapeBehavior>.Reclaim(this);
-    }
+        public override void Load(GameDataReader reader)
+        {
+            velocity = reader.ReadVector3();
+        }
 
-    public override ShapeBehaviorType BehaviorType { get=> ShapeBehaviorType.Movement; }
+        public override void Recycle()
+        {
+            ShapeBehaviorPool<MovementShapeBehavior>.Reclaim(this);
+        }
+
+        public override ShapeBehaviorType BehaviorType { get=> ShapeBehaviorType.Movement; }
+    }
 }

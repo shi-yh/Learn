@@ -1,32 +1,35 @@
 using System.IO;
 using UnityEngine;
 
-public class PersisentStorage : MonoBehaviour
+namespace ObjectManagement
 {
-    private string _savePath;
-
-    private void Awake()
+    public class PersisentStorage : MonoBehaviour
     {
-         _savePath = Path.Combine(Application.persistentDataPath, "saveFile");
-    }
+        private string _savePath;
 
-
-    public void Save(PersistableObject o, int version)
-    {
-        using (var writer = new BinaryWriter(File.Open(_savePath, FileMode.Create)))
+        private void Awake()
         {
-            writer.Write(-version);
-            o.Save(new GameDataWriter(writer));
+            _savePath = Path.Combine(Application.persistentDataPath, "saveFile");
         }
-    }
 
-    public void Load(PersistableObject o)
-    {
-        ///协程会导致在文件流关闭后才进行读取数据的操作，所以先预读到内存中
-        byte[] data = File.ReadAllBytes(_savePath);
 
-        var reader = new BinaryReader(new MemoryStream(data));
+        public void Save(PersistableObject o, int version)
+        {
+            using (var writer = new BinaryWriter(File.Open(_savePath, FileMode.Create)))
+            {
+                writer.Write(-version);
+                o.Save(new GameDataWriter(writer));
+            }
+        }
+
+        public void Load(PersistableObject o)
+        {
+            ///协程会导致在文件流关闭后才进行读取数据的操作，所以先预读到内存中
+            byte[] data = File.ReadAllBytes(_savePath);
+
+            var reader = new BinaryReader(new MemoryStream(data));
         
-        o.Load(new GameDataReader(reader, -reader.ReadInt32()));
+            o.Load(new GameDataReader(reader, -reader.ReadInt32()));
+        }
     }
 }
