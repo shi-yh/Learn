@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4872238879568878976}
   - component: {fileID: -5378490508155837452}
   m_Layer: 9
-  m_Name: Enemy
+  m_Name: Enemy_Small_Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,7 +108,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 25460b35221a69a498ff5734d19ba709, type: 2}
+  - {fileID: 2100000, guid: 66b6606d3a95d7647b089beadc223fcc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

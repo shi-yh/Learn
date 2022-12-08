@@ -2,6 +2,14 @@ using UnityEngine;
 
 namespace Tower_Defense
 {
+    public enum DefenceEnemyType
+    {
+        Small,
+        Medium,
+        Large,
+        max
+    }
+
     public class DefenceEnemy : GameBehavior
     {
         [SerializeField] private Transform _model = default;
@@ -153,7 +161,8 @@ namespace Tower_Defense
             {
                 if (_tileTo == null)
                 {
-                    _originEnemyFactory.Reclaim(this);
+                    DefenceGame.EnemyReachedDestination();
+                    Recycle();
                     return false;
                 }
 
@@ -178,13 +187,18 @@ namespace Tower_Defense
             return true;
         }
 
-        public void Initialize(float scale, float pathOffset, float speed)
+        public override void Recycle()
+        {
+            _originEnemyFactory.Reclaim(this);
+        }
+
+        public void Initialize(float scale, float pathOffset, float speed, float health)
         {
             _model.localScale = new Vector3(scale, scale, scale);
             this._pathOffse = pathOffset;
             _speed = speed;
             Scale = scale;
-            Health = 100f * scale;
+            Health = health;
         }
 
         public void ApplyDamage(float damage)

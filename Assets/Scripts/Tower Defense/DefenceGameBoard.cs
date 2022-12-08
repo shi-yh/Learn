@@ -102,11 +102,21 @@ namespace Tower_Defense
                     {
                         DefenceGameTile.MakeNorthSouthNeigbors(tile, _tiles[index - size.x]);
                     }
-
-                    tile.Content = contentFactory.Get(DefenceGameTileContentType.Empty);
                 }
             }
+            
+            Clear();
+        }
 
+        public void Clear()
+        {
+            foreach (DefenceGameTile tile in _tiles)
+            {
+                tile.Content = _contentFactory.Get(DefenceGameTileContentType.Empty);
+            }
+
+            _spawnPoints.Clear();
+            _updatingContent.Clear();
             ToggleDestination(_tiles[0]);
             ToggleSpawnPoint(_tiles[^1]);
         }

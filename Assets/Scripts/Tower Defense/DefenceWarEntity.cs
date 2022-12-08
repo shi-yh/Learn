@@ -15,7 +15,7 @@ namespace Tower_Defense
             set { _originFactory = value; }
         }
 
-        public void Recycle()
+        public override void Recycle()
         {
             _originFactory.Reclaim(this);
         }

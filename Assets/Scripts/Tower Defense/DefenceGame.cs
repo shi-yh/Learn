@@ -11,27 +11,32 @@ namespace Tower_Defense
 
         [SerializeField] private DefenceGameTileFactory _tileContectFactory = default;
 
-        [SerializeField] private DefenceEnemyFactory _enemyFactory;
-
         [SerializeField] private DefenceWarFactory _warFactory;
 
-        [SerializeField, Range(0.1f, 10f)] private float _spawnSpeed = 1;
+        [SerializeField] private int _startingPlayerHealth = 10;
 
         private GameBehaviorCollection _enemies = new GameBehaviorCollection();
 
         protected GameBehaviorCollection _nonEnemies = new GameBehaviorCollection();
 
-        private float _spwanProgress;
-
         private TowerType _selectedTowerType;
 
         private Ray TouchRay => Camera.main.ScreenPointToRay(Input.mousePosition);
 
+        [SerializeField] private GameScenario _scenario = default;
+
+        private GameScenario.State _activeScenario;
+
         private static DefenceGame s_instance;
+
+        private int _playerHealth;
 
         private void Awake()
         {
             _board.Initialize(_boradSize, _tileContectFactory);
+            _board.ShowGrid = true;
+            _activeScenario = _scenario.Begin();
+            _playerHealth = _startingPlayerHealth;
         }
 
 
@@ -79,12 +84,23 @@ namespace Tower_Defense
                 _selectedTowerType = TowerType.Mortar;
             }
 
-
-            _spwanProgress += _spawnSpeed * Time.deltaTime;
-            while (_spwanProgress >= 1f)
+            if (Input.GetKeyDown(KeyCode.B))
             {
-                _spwanProgress -= 1;
-                SpawnEnemy();
+                BeginNewGame();
+            }
+
+            if (_playerHealth <= 0)
+            {
+                Debug.Log("Defeat");
+                BeginNewGame();
+            }
+
+
+            if (!_activeScenario.Progress()&& _enemies.IsEmpty)
+            {
+                Debug.Log("Victory");
+                BeginNewGame();
+                _activeScenario.Progress();
             }
 
             _enemies.GameUpdate();
@@ -94,13 +110,13 @@ namespace Tower_Defense
             _nonEnemies.GameUpdate();
         }
 
-        private void SpawnEnemy()
+        public static void SpawnEnemy(DefenceEnemyFactory factory, DefenceEnemyType type)
         {
-            DefenceGameTile tile = _board.GetSpawnPoint(Random.Range(0, _board.SpawnPointCount));
+            DefenceGameTile tile = s_instance._board.GetSpawnPoint(Random.Range(0, s_instance._board.SpawnPointCount));
 
-            DefenceEnemy enemy = _enemyFactory.Get();
+            DefenceEnemy enemy = factory.Get(type);
             enemy.SpawnOn(tile);
-            _enemies.Add(enemy);
+            s_instance._enemies.Add(enemy);
         }
 
         public static Shell SpawnShell()
@@ -115,6 +131,11 @@ namespace Tower_Defense
             Explosion explosion = s_instance._warFactory.Explosion;
             s_instance._nonEnemies.Add(explosion);
             return explosion;
+        }
+
+        public static void EnemyReachedDestination()
+        {
+            s_instance._playerHealth -= 1;
         }
 
         private void OnEnable()
@@ -155,6 +176,15 @@ namespace Tower_Defense
                     _board.ToggleSpawnPoint(tile);
                 }
             }
+        }
+
+        void BeginNewGame()
+        {
+            _enemies.Clear();
+            _nonEnemies.Clear();
+            _board.Clear();
+            _activeScenario = _scenario.Begin();
+            _playerHealth = _startingPlayerHealth;
         }
     }
 }
