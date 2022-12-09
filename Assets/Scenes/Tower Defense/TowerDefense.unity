@@ -362,9 +362,9 @@ MonoBehaviour:
   _boradSize: {x: 11, y: 11}
   _board: {fileID: 1681362319}
   _tileContectFactory: {fileID: 11400000, guid: a8538d18100b9fc4ea52d7967a453849, type: 2}
-  _enemyFactory: {fileID: 11400000, guid: 9a6974961e669d846a1616bb9f29debc, type: 2}
   _warFactory: {fileID: 11400000, guid: 038249f68af6a504eb316fdc7689d003, type: 2}
-  _spawnSpeed: 1
+  _startingPlayerHealth: 10
+  _scenario: {fileID: 11400000, guid: c7f985cd85b056a48a32a0b03589e5aa, type: 2}
 --- !u!1 &1184779953
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,6 +15,8 @@ namespace Tower_Defense
 
         [SerializeField] private int _startingPlayerHealth = 10;
 
+        [SerializeField] private float _playSpeed = 1f;
+
         private GameBehaviorCollection _enemies = new GameBehaviorCollection();
 
         protected GameBehaviorCollection _nonEnemies = new GameBehaviorCollection();
@@ -30,6 +32,8 @@ namespace Tower_Defense
         private static DefenceGame s_instance;
 
         private int _playerHealth;
+
+        private const float _pausedTimeScale = 0.01f;
 
         private void Awake()
         {
@@ -56,6 +60,15 @@ namespace Tower_Defense
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Time.timeScale = Time.timeScale > _pausedTimeScale ? _pausedTimeScale : _playSpeed;
+            }
+            else if (Time.timeScale>_pausedTimeScale)
+            {
+                Time.timeScale = _playSpeed;
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 HandleTouch();
@@ -96,7 +109,7 @@ namespace Tower_Defense
             }
 
 
-            if (!_activeScenario.Progress()&& _enemies.IsEmpty)
+            if (!_activeScenario.Progress() && _enemies.IsEmpty)
             {
                 Debug.Log("Victory");
                 BeginNewGame();

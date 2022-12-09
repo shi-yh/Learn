@@ -104,7 +104,7 @@ namespace Tower_Defense
                     }
                 }
             }
-            
+
             Clear();
         }
 
