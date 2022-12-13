@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Tower_Defense
@@ -14,7 +15,11 @@ namespace Tower_Defense
     {
         [SerializeField] private Transform _model = default;
 
+        [SerializeField] private DefenceAnimationConfig _animationConfig = default;
+
         private DefenceEnemyFactory _originEnemyFactory;
+
+        private DefenceEnemyAnimator _animator;
 
         /// <summary>
         /// 记录的当前瓦片和目的地瓦片
@@ -35,6 +40,9 @@ namespace Tower_Defense
 
         private float _speed;
 
+        private Collider _targetPointCollider;
+
+
         private float Health { get; set; }
         public float Scale { get; private set; }
 
@@ -43,6 +51,19 @@ namespace Tower_Defense
             get => _originEnemyFactory;
             set { _originEnemyFactory = value; }
         }
+
+        public Collider TargetPointCollider
+        {
+            set { _targetPointCollider = value; }
+        }
+
+        public bool IsValidTarget => _animator.CurrentClip == DefenceEnemyAnimator.Clip.Move;
+
+        private void Awake()
+        {
+            _animator.Configure(_model.GetChild(0).gameObject.AddComponent<Animator>(), _animationConfig);
+        }
+
 
         public void SpawnOn(DefenceGameTile tile)
         {
@@ -55,6 +76,7 @@ namespace Tower_Defense
         private void PrepareIntro()
         {
             _positionFrom = _tileFrom.transform.localPosition;
+            transform.localPosition = _positionFrom;
             _positionTo = _tileFrom.ExitPoint;
             _direction = _tileFrom.PathDirection;
             _directionChange = DirectionChange.None;
@@ -150,10 +172,37 @@ namespace Tower_Defense
 
         public override bool GameUpdate()
         {
+            _animator.GameUpdate();
+
+
+            if (_animator.CurrentClip == DefenceEnemyAnimator.Clip.Intro)
+            {
+                if (!_animator.IsDone)
+                {
+                    return true;
+                }
+
+                _animator.PlayMove(_speed / Scale);
+                _targetPointCollider.enabled = true;
+            }
+            else if (_animator.CurrentClip >= DefenceEnemyAnimator.Clip.Outro)
+            {
+                if (_animator.IsDone)
+                {
+                    Recycle();
+                    return false;
+                }
+
+                return true;
+            }
+
+
             if (Health <= 0)
             {
-                _originEnemyFactory.Reclaim(this);
-                return false;
+                _animator.PlayDying();
+                _targetPointCollider.enabled = false;
+
+                return true;
             }
 
             _progress += Time.deltaTime * _progressFactor;
@@ -162,8 +211,10 @@ namespace Tower_Defense
                 if (_tileTo == null)
                 {
                     DefenceGame.EnemyReachedDestination();
-                    Recycle();
-                    return false;
+                    _animator.PlayOutro();
+                    _targetPointCollider.enabled = false;
+
+                    return true;
                 }
 
                 _progress = (_progress - 1f) / _progressFactor;
@@ -189,6 +240,7 @@ namespace Tower_Defense
 
         public override void Recycle()
         {
+            _animator.Stop();
             _originEnemyFactory.Reclaim(this);
         }
 
@@ -199,6 +251,8 @@ namespace Tower_Defense
             _speed = speed;
             Scale = scale;
             Health = health;
+            _animator.PlayIntro();
+            _targetPointCollider.enabled = false;
         }
 
         public void ApplyDamage(float damage)

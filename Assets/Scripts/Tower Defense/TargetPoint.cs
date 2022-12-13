@@ -42,6 +42,9 @@ namespace Tower_Defense
         {
             Enemy = transform.root.GetComponent<DefenceEnemy>();
             Debug.Assert(Enemy != null, "Target point without Enemy root", this);
+
+            Enemy.TargetPointCollider = GetComponent<Collider>();
+
         }
     }
 }

@@ -364,6 +364,7 @@ MonoBehaviour:
   _tileContectFactory: {fileID: 11400000, guid: a8538d18100b9fc4ea52d7967a453849, type: 2}
   _warFactory: {fileID: 11400000, guid: 038249f68af6a504eb316fdc7689d003, type: 2}
   _startingPlayerHealth: 10
+  _playSpeed: 1
   _scenario: {fileID: 11400000, guid: c7f985cd85b056a48a32a0b03589e5aa, type: 2}
 --- !u!1 &1184779953
 GameObject:
