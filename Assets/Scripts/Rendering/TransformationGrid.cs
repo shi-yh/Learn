@@ -13,6 +13,9 @@ namespace Rendering
 
         private List<Transformation> _transformations = new List<Transformation>();
 
+        private Matrix4x4 _transformGrid;
+
+
         private void Awake()
         {
             _grid = new Transform[gridResolution * gridResolution * gridResolution];
@@ -31,7 +34,7 @@ namespace Rendering
 
         private void Update()
         {
-            GetComponents(_transformations);
+            UpdateTransformation();
             int index = 0;
             for (int z = 0; z < gridResolution; z++)
             {
@@ -46,17 +49,25 @@ namespace Rendering
             }
         }
 
+        private void UpdateTransformation()
+        {
+            GetComponents(_transformations);
+            if (_transformations.Count > 0)
+            {
+                _transformGrid = _transformations[0].Matrix;
+                for (int i = 1; i < _transformations.Count; i++)
+                {
+                    _transformGrid = _transformations[i].Matrix * _transformGrid;
+                }
+            }
+        }
+
         private Vector3 TransformPoint(int x, int y, int z)
         {
             ///点的原坐标
             Vector3 coordinates = GetCoordinates(x, y, z);
-
-            for (int i = 0; i < _transformations.Count; i++)
-            {   
-                coordinates = _transformations[i].Apply(coordinates);
-            }
-
-            return coordinates;
+            
+            return _transformGrid.MultiplyPoint(coordinates);
         }
 
         private Transform CreateGridPoint(int x, int y, int z)

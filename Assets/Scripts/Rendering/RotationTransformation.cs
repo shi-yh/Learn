@@ -6,18 +6,44 @@ namespace Rendering
     {
         public Vector3 rotation;
 
-        public override Vector3 Apply(Vector3 point)
+        public override Matrix4x4 Matrix
         {
-            ///这里传进来的值是角度，先转换成弧度
-            /// 二维坐标系下，任意一个点可以表示为（x,y）
-            /// 也可以表示为x*(1,0)+y*(0,1)
-            /// 当有旋转的时候可以表示为x*（cosz,sinz）+y(-sinz,cosz)   旋转0度时
-            float radZ = rotation.z * Mathf.Deg2Rad;
-            float sinZ = Mathf.Sin(radZ);
-            float cosZ = Mathf.Cos(radZ);
+            get
+            {
+                ///这里传进来的值是角度，先转换成弧度
+                float radX = rotation.x * Mathf.Deg2Rad;
+                float radY = rotation.y * Mathf.Deg2Rad;
+                float radZ = rotation.z * Mathf.Deg2Rad;
+                float sinX = Mathf.Sin(radX);
+                float cosX = Mathf.Cos(radX);
+                float sinY = Mathf.Sin(radY);
+                float cosY = Mathf.Cos(radY);
+                float sinZ = Mathf.Sin(radZ);
+                float cosZ = Mathf.Cos(radZ);
 
 
-            return new Vector3(point.x * cosZ - point.y * sinZ, point.x * sinZ + point.y * cosZ, point.z);
+                Matrix4x4 matrix = new Matrix4x4();
+                matrix.SetColumn(0, new Vector4(
+                    cosY * cosZ,
+                    cosX * sinZ + sinX * sinY * cosZ,
+                    sinX * sinZ - cosX * sinY * cosZ,
+                    0f
+                ));
+                matrix.SetColumn(1, new Vector4(
+                    -cosY * sinZ,
+                    cosX * cosZ - sinX * sinY * sinZ,
+                    sinX * cosZ + cosX * sinY * sinZ,
+                    0f
+                ));
+                matrix.SetColumn(2, new Vector4(
+                    sinY,
+                    -sinX * cosY,
+                    cosX * cosY,
+                    0f
+                ));
+                matrix.SetColumn(3, new Vector4(0f, 0f, 0f, 1f));
+                return matrix;
+            }
         }
     }
 }

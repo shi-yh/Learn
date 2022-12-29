@@ -6,14 +6,20 @@ namespace Rendering
     {
         public Vector3 scale;
 
-
-        public override Vector3 Apply(Vector3 point)
+        public override Matrix4x4 Matrix
         {
-            point.x *= scale.x;
-            point.y *= scale.y;
-            point.z *= scale.z;
+            get
+            {
+                Matrix4x4 matrix = new Matrix4x4();
 
-            return point;
+                matrix.SetRow(0, new Vector4(scale.x, 0, 0, 0));
+                matrix.SetRow(1, new Vector4(0, scale.y, 0, 0));
+                matrix.SetRow(2, new Vector4(0, 0, scale.z, 0));
+                matrix.SetRow(3, new Vector4(0, 0, 0, 1));
+
+
+                return matrix;
+            }
         }
     }
 }
