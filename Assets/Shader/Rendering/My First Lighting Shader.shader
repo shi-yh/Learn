@@ -22,76 +22,38 @@ Shader "Custom/My First Lighting Shader"
             CGPROGRAM
             #pragma target 3.0
 
+            ///这里一共有两个选择，但是另一个选择没有关键字，所以使用_
+            #pragma multi_compile _ VERTEXLIGHT_ON
+
+            #pragma vertex MyVertexProgram
+            #pragma fragment MyFragmentProgram
+            #pragma FORWARD_BASE_PASS
+
+            #include "My Lighting.cginc"
+            ENDCG
+        }
+
+         Pass
+        {
+            Tags
+            {
+                "LightMode" = "ForwardAdd"
+            }
+            
+            Blend One One
+            ///上一个pass已经写入了深度数据，这里可以不用再写入
+            ZWrite Off
+
+            CGPROGRAM
+            #pragma target 3.0
+            #pragma multi_compile_fwdadd
             #pragma vertex MyVertexProgram
             #pragma fragment MyFragmentProgram
 
-            #include "UnityPBSLighting.cginc"
-
-            struct Interpolators
-            {
-                float4 position:SV_POSITION;
-                float3 normal:TEXCOORD1;
-                float2 uv:TEXCOORD0;
-                float3 worldPos:TEXCOORD2;
-            };
-
-            struct VertexData
-            {
-                float4 position:POSITION;
-                float2 uv:TEXCOORD0;
-                float3 normal:NORMAL;
-            };
-
-            float4 _Tint;
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            float _Smoothness;
-            float _Metallic;
-
-            Interpolators MyVertexProgram(VertexData v)
-            {
-                Interpolators i;
-
-                i.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                i.position = UnityObjectToClipPos(v.position);
-                i.normal = UnityObjectToWorldNormal(v.normal);
-                i.normal = normalize(i.normal);
-                i.worldPos = mul(unity_ObjectToWorld, v.position);
-                return i;
-            }
-
-            float4 MyFragmentProgram(Interpolators i):SV_Target
-            {
-
-             
-                
-                
-                i.normal = normalize(i.normal);
-                float3 lightDir = _WorldSpaceLightPos0.xyz;
-                float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
-                float3 halfVector = normalize(lightDir + viewDir);
-
-                float3 lightColor = _LightColor0.xyz;
-
-                float oneMinusReflectivity;
-
-
-                float3 albedo = tex2D(_MainTex, i.uv).rgb * _Tint.rgb;
-
-
-                float3 specularTint;
-                albedo = DiffuseAndSpecularFromMetallic(albedo, _Metallic, specularTint, oneMinusReflectivity);
-
-                float3 specular = specularTint.rgb * lightColor * pow(DotClamped(halfVector, i.normal),
-                                                                      _Smoothness * 100);
-
-                albedo = EnergyConservationBetweenDiffuseAndSpecular(albedo, specularTint.rgb, oneMinusReflectivity);
-
-                float3 diffuse = DotClamped(lightDir, i.normal) * lightColor * albedo * lightColor;
-                
-                return float4(diffuse+specular,1);
-            }
+            
+            #include "My Lighting.cginc"
             ENDCG
         }
+
     }
 }
