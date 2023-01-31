@@ -72,7 +72,7 @@ namespace FastDev
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
         public static void Debug(string format, object arg0)
         {
-            Log(LogLevel.Debug, StringHelper.Format(format, arg0));
+            Log(LogLevel.Debug, Utility.TextUtility.Format(format, arg0));
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace FastDev
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
         public static void Debug(string format, object arg0, object arg1)
         {
-            Log(LogLevel.Debug, StringHelper.Format(format, arg0, arg1));
+            Log(LogLevel.Debug, Utility.TextUtility.Format(format, arg0, arg1));
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace FastDev
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
         public static void Debug(string format, object arg0, object arg1, object arg2)
         {
-            Log(LogLevel.Debug, StringHelper.Format(format, arg0, arg1, arg2));
+            Log(LogLevel.Debug, Utility.TextUtility.Format(format, arg0, arg1, arg2));
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace FastDev
         [Conditional("ENABLE_DEBUG_AND_ABOVE_LOG")]
         public static void Debug(string format, params object[] args)
         {
-            Log(LogLevel.Debug, StringHelper.Format(format, args));
+            Log(LogLevel.Debug, Utility.TextUtility.Format(format, args));
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace FastDev
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         public static void Info(string format, object arg0)
         {
-            Log(LogLevel.Info, StringHelper.Format(format, arg0));
+            Log(LogLevel.Info, Utility.TextUtility.Format(format, arg0));
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace FastDev
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         public static void Info(string format, object arg0, object arg1)
         {
-            Log(LogLevel.Info, StringHelper.Format(format, arg0, arg1));
+            Log(LogLevel.Info, Utility.TextUtility.Format(format, arg0, arg1));
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace FastDev
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         public static void Info(string format, object arg0, object arg1, object arg2)
         {
-            Log(LogLevel.Info, StringHelper.Format(format, arg0, arg1, arg2));
+            Log(LogLevel.Info, Utility.TextUtility.Format(format, arg0, arg1, arg2));
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace FastDev
         [Conditional("ENABLE_INFO_AND_ABOVE_LOG")]
         public static void Info(string format, params object[] args)
         {
-            Log(LogLevel.Info, StringHelper.Format(format, args));
+            Log(LogLevel.Info, Utility.TextUtility.Format(format, args));
         }
 
         /// <summary>
@@ -254,7 +254,7 @@ namespace FastDev
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
         public static void Warning(string format, object arg0)
         {
-            Log(LogLevel.Warning, StringHelper.Format(format, arg0));
+            Log(LogLevel.Warning, Utility.TextUtility.Format(format, arg0));
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace FastDev
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
         public static void Warning(string format, object arg0, object arg1)
         {
-            Log(LogLevel.Warning, StringHelper.Format(format, arg0, arg1));
+            Log(LogLevel.Warning, Utility.TextUtility.Format(format, arg0, arg1));
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace FastDev
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
         public static void Warning(string format, object arg0, object arg1, object arg2)
         {
-            Log(LogLevel.Warning, StringHelper.Format(format, arg0, arg1, arg2));
+            Log(LogLevel.Warning, Utility.TextUtility.Format(format, arg0, arg1, arg2));
         }
 
         /// <summary>
@@ -305,7 +305,7 @@ namespace FastDev
         [Conditional("ENABLE_WARNING_AND_ABOVE_LOG")]
         public static void Warning(string format, params object[] args)
         {
-            Log(LogLevel.Warning, StringHelper.Format(format, args));
+            Log(LogLevel.Warning, Utility.TextUtility.Format(format, args));
         }
 
         /// <summary>
@@ -354,7 +354,7 @@ namespace FastDev
         [Conditional("ENABLE_ERROR_AND_ABOVE_LOG")]
         public static void Error(string format, object arg0)
         {
-            Log(LogLevel.Error, StringHelper.Format(format, arg0));
+            Log(LogLevel.Error, Utility.TextUtility.Format(format, arg0));
         }
 
         /// <summary>
@@ -372,7 +372,7 @@ namespace FastDev
         [Conditional("ENABLE_ERROR_AND_ABOVE_LOG")]
         public static void Error(string format, object arg0, object arg1)
         {
-            Log(LogLevel.Error, StringHelper.Format(format, arg0, arg1));
+            Log(LogLevel.Error, Utility.TextUtility.Format(format, arg0, arg1));
         }
 
         /// <summary>
@@ -391,7 +391,7 @@ namespace FastDev
         [Conditional("ENABLE_ERROR_AND_ABOVE_LOG")]
         public static void Error(string format, object arg0, object arg1, object arg2)
         {
-            Log(LogLevel.Error, StringHelper.Format(format, arg0, arg1, arg2));
+            Log(LogLevel.Error, Utility.TextUtility.Format(format, arg0, arg1, arg2));
         }
 
         /// <summary>
@@ -408,7 +408,7 @@ namespace FastDev
         [Conditional("ENABLE_ERROR_AND_ABOVE_LOG")]
         public static void Error(string format, params object[] args)
         {
-            Log(LogLevel.Error, StringHelper.Format(format, args));
+            Log(LogLevel.Error, Utility.TextUtility.Format(format, args));
         }
 
         /// <summary>
@@ -460,7 +460,7 @@ namespace FastDev
         [Conditional("ENABLE_FATAL_AND_ABOVE_LOG")]
         public static void Fatal(string format, object arg0)
         {
-            Log(LogLevel.Fatal, StringHelper.Format(format, arg0));
+            Log(LogLevel.Fatal, Utility.TextUtility.Format(format, arg0));
         }
 
         /// <summary>
@@ -479,7 +479,7 @@ namespace FastDev
         [Conditional("ENABLE_FATAL_AND_ABOVE_LOG")]
         public static void Fatal(string format, object arg0, object arg1)
         {
-            Log(LogLevel.Fatal, StringHelper.Format(format, arg0, arg1));
+            Log(LogLevel.Fatal, Utility.TextUtility.Format(format, arg0, arg1));
         }
 
         /// <summary>
@@ -499,7 +499,7 @@ namespace FastDev
         [Conditional("ENABLE_FATAL_AND_ABOVE_LOG")]
         public static void Fatal(string format, object arg0, object arg1, object arg2)
         {
-            Log(LogLevel.Fatal, StringHelper.Format(format, arg0, arg1, arg2));
+            Log(LogLevel.Fatal, Utility.TextUtility.Format(format, arg0, arg1, arg2));
         }
 
         /// <summary>
@@ -517,7 +517,7 @@ namespace FastDev
         [Conditional("ENABLE_FATAL_AND_ABOVE_LOG")]
         public static void Fatal(string format, params object[] args)
         {
-            Log(LogLevel.Fatal, StringHelper.Format(format, args));
+            Log(LogLevel.Fatal, Utility.TextUtility.Format(format, args));
         }
 
         /// <summary>
@@ -530,7 +530,7 @@ namespace FastDev
             switch (level)
             {
                 case LogLevel.Debug:
-                    UnityEngine.Debug.Log(StringHelper.Format("<color=#888888>{0}</color>", message.ToString()));
+                    UnityEngine.Debug.Log(Utility.TextUtility.Format("<color=#888888>{0}</color>", message.ToString()));
                     break;
 
                 case LogLevel.Info:
